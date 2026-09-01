@@ -17,10 +17,11 @@ const footerSections = [
     ],
   },
   {
-    title: "Knowledge",
+    title: "Portals & Login",
     links: [
-      { name: "Insights & Articles", href: "/insights" },
-      { name: "Research & Manuals", href: "/insights#manuals" },
+      { name: "Member / Admin Login", href: "/login" },
+      { name: "Member Dashboard", href: "/dashboard" },
+      { name: "Admin Dashboard", href: "/admin" },
     ],
   },
   {
@@ -51,7 +52,9 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Brand Mantra */}
         <div className="mb-10 border-b border-white/10 pb-8">
-          <h2 className="text-xl font-bold tracking-wide">REALISE REALITY INITIATIVE</h2>
+          <h2 className="text-xl font-bold tracking-wide">
+            REALISE REALITY INITIATIVE
+          </h2>
           <p className="mt-2 text-sm text-[#F7B500]">
             Helping You See Life Through the Lens of Truth.
           </p>
@@ -81,13 +84,41 @@ export default function Footer() {
         </div>
 
         {/* Social Links & Copyright */}
-        <div className="mt-12 border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-400">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-gray-400 sm:flex-row">
           <p>© {currentYear} Realise Reality Initiative. All rights reserved.</p>
           <div className="flex gap-4 text-gray-300">
-            <a href="https://facebook.com" target="_blank" rel="noreferrer" className="hover:text-white">Facebook</a>
-            <a href="https://whatsapp.com" target="_blank" rel="noreferrer" className="hover:text-white">WhatsApp</a>
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-white">Instagram</a>
-            <a href="https://youtube.com" target="_blank" rel="noreferrer" className="hover:text-white">YouTube</a>
+            <a
+              href="https://facebook.com"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-white"
+            >
+              Facebook
+            </a>
+            <a
+              href="https://whatsapp.com"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-white"
+            >
+              WhatsApp
+            </a>
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-white"
+            >
+              Instagram
+            </a>
+            <a
+              href="https://youtube.com"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-white"
+            >
+              YouTube
+            </a>
           </div>
         </div>
       </div>

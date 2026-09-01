@@ -56,7 +56,7 @@ const leadership: LeadershipMember[] = [
       "Don't depend on a God for something other men achieved without a God.",
   },
   {
-    role: "Director of Finance",
+    role: "Director of Welfare and Human Support",
     name: "Hazel Campbell",
     title: "Humanitarian Advocate | Caregiver | Community Supporter",
     image: "/images/photo_2026-08-31_18-46-46.jpg",
@@ -71,7 +71,7 @@ const leadership: LeadershipMember[] = [
     motto: "Anything is possible with a positive mindset.",
   },
   {
-    role: "Director of Welfare and Human Support",
+    role: "Director of Programs and Outreaches",
     name: "Benjamin Sesay",
     title: "Tailor | Medical Student | Self-Mastery Educator",
     image: "/images/photo_2026-08-31_20-16-16.jpg",

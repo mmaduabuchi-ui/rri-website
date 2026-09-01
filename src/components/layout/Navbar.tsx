@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -19,7 +20,25 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hasVideoError, setHasVideoError] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [user, setUser] = useState<any>(null);
+  const [mounted, setMounted] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
@@ -104,12 +123,11 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Dedicated Active Audio Toggle Button */}
           {!hasVideoError && (
             <button
               type="button"
               onClick={toggleAudio}
-              className="z-10 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-700 hover:bg-[#F7B500] hover:text-[#0B1B3D] transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-[#F7B500]"
+              className="z-10 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-700 transition-all duration-150 hover:bg-[#F7B500] hover:text-[#0B1B3D] focus:outline-none focus:ring-2 focus:ring-[#F7B500]"
               title={isMuted ? "Unmute Logo Sound" : "Mute Logo Sound"}
               aria-label={isMuted ? "Unmute Logo Sound" : "Mute Logo Sound"}
             >
@@ -149,47 +167,58 @@ export default function Navbar() {
         </div>
 
         {/* Desktop Navigation */}
-        <div className="hidden items-center gap-5 lg:flex">
+        <div className="hidden items-center gap-4 lg:flex">
           {navigation.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-[#0B1B3D] focus-visible:text-[#0B1B3D]"
+              className="text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-[#0B1B3D]"
             >
               {item.name}
             </Link>
           ))}
 
           <Link
-            href="/get-involved"
-            className="rounded-lg bg-[#F7B500] px-5 py-2.5 text-sm font-bold text-[#0B1B3D] transition-all duration-200 hover:bg-[#dca200] focus-visible:ring-2 focus-visible:ring-[#F7B500] focus-visible:ring-offset-2"
+            href="/login"
+            className="text-sm font-semibold text-[#0B1B3D] transition-colors hover:text-[#1E824C]"
           >
-            Join Us
+            Login
           </Link>
+
+          {mounted && user ? (
+            <Link
+              href="/dashboard"
+              className="rounded-lg bg-[#0B1B3D] px-4 py-2 text-sm font-bold text-white transition-all duration-200 hover:bg-[#122856]"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <Link
+              href="/get-involved"
+              className="rounded-lg bg-[#F7B500] px-4 py-2 text-sm font-bold text-[#0B1B3D] transition-all duration-200 hover:bg-[#dca200]"
+            >
+              Join Us
+            </Link>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
         <button
           type="button"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-[#0B1B3D] hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-[#F7B500] lg:hidden"
-          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
           aria-expanded={mobileMenuOpen}
           aria-controls="mobile-navigation"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-[#0B1B3D] hover:bg-gray-100 lg:hidden"
           onClick={() => setMobileMenuOpen((open) => !open)}
         >
-          <span className="sr-only">
-            {mobileMenuOpen ? "Close menu" : "Open menu"}
-          </span>
-
           {mobileMenuOpen ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
               fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
               stroke="currentColor"
-              strokeWidth="2"
               className="h-6 w-6"
-              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -200,12 +229,11 @@ export default function Navbar() {
           ) : (
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
               fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
               stroke="currentColor"
-              strokeWidth="2"
               className="h-6 w-6"
-              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -219,10 +247,7 @@ export default function Navbar() {
 
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
-        <div
-          id="mobile-navigation"
-          className="border-t border-gray-200 bg-white lg:hidden"
-        >
+        <div id="mobile-navigation" className="border-t border-gray-200 bg-white lg:hidden">
           <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6">
             <div className="flex flex-col">
               {navigation.map((item) => (
@@ -230,19 +255,37 @@ export default function Navbar() {
                   key={item.href}
                   href={item.href}
                   onClick={closeMobileMenu}
-                  className="border-b border-gray-100 px-2 py-3.5 text-base font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-[#0B1B3D]"
+                  className="border-b border-gray-100 px-2 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-[#0B1B3D]"
                 >
                   {item.name}
                 </Link>
               ))}
 
               <Link
-                href="/get-involved"
+                href="/login"
                 onClick={closeMobileMenu}
-                className="mt-4 rounded-lg bg-[#F7B500] px-5 py-3 text-center font-bold text-[#0B1B3D] transition-colors hover:bg-[#dca200]"
+                className="border-b border-gray-100 px-2 py-3 text-base font-semibold text-[#0B1B3D] hover:bg-gray-50"
               >
-                Join Us
+                Member / Admin Login
               </Link>
+
+              {mounted && user ? (
+                <Link
+                  href="/dashboard"
+                  onClick={closeMobileMenu}
+                  className="mt-4 rounded-lg bg-[#0B1B3D] px-5 py-3 text-center font-bold text-white"
+                >
+                  Dashboard
+                </Link>
+              ) : (
+                <Link
+                  href="/get-involved"
+                  onClick={closeMobileMenu}
+                  className="mt-4 rounded-lg bg-[#F7B500] px-5 py-3 text-center font-bold text-[#0B1B3D]"
+                >
+                  Join Us
+                </Link>
+              )}
             </div>
           </div>
         </div>
