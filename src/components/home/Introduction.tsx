@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Introduction() {
   return (
     <section className="bg-white py-20 sm:py-24 lg:py-28">
@@ -30,6 +32,13 @@ export default function Introduction() {
                 Clear understanding creates better decisions. Better decisions
                 create meaningful impact.
               </p>
+            </div>
+
+            {/* CTA Button */}
+            <div className="pt-2">
+              <Link href="/about" className="btn-learn-more text-base font-semibold">
+                Learn More
+              </Link>
             </div>
           </div>
         </div>

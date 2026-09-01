@@ -73,3 +73,27 @@ img {
     scroll-behavior: auto !important;
   }
 }
+
+/* ==========================================
+   High-Contrast Button Styling
+   ========================================== */
+.btn-learn-more {
+  background-color: var(--rri-secondary); /* Brand green (#1e824c) */
+  color: var(--rri-white) !important;      /* Crisp white text for visibility */
+  padding: 0.625rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  border: 2px solid var(--rri-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-learn-more:hover {
+  background-color: #155d36;               /* Darker green on hover */
+  border-color: #155d36;
+  color: var(--rri-white) !important;
+}

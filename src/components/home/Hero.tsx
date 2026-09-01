@@ -51,7 +51,7 @@ export default function Hero() {
 
             <Link
               href="/about"
-              className="inline-flex min-h-12 items-center justify-center rounded-lg border border-white/30 px-7 py-3.5 text-base font-semibold text-white transition-all duration-200 hover:border-white hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B1B3D]"
+              className="btn-learn-more min-h-12 text-base font-semibold"
             >
               Learn More
             </Link>
