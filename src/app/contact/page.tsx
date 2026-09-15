@@ -8,6 +8,25 @@ export const metadata: Metadata = {
     "Contact Realise Reality Initiative for questions, collaboration, volunteering, partnerships, and general inquiries.",
 };
 
+const socialLinks = [
+  {
+    name: "Facebook",
+    href: "https://www.facebook.com/share/1QANYQ1r6k/?mibextid=wwXIfr",
+  },
+  {
+    name: "Instagram",
+    href: "https://www.instagram.com/realiserealityinitiative?igsi=bDIxOWdxc3B2aXgw&utm_source=qr",
+  },
+  {
+    name: "TikTok",
+    href: "https://www.tiktok.com/@realiserealityinitiative",
+  },
+  {
+    name: "YouTube",
+    href: "https://youtube.com/@realiserealityinitiativerri?si=4YbCBNyTDsLrZBGO",
+  },
+];
+
 export default function ContactPage() {
   return (
     <main>
@@ -48,6 +67,37 @@ export default function ContactPage() {
               </a>
             </div>
 
+            {/* WhatsApp */}
+            <div className="mt-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+              <p className="text-sm font-bold uppercase tracking-wider text-[#1E824C]">
+                WhatsApp
+              </p>
+
+              <p className="mt-2 text-gray-600">
+                Reach us directly or join the RRI community group.
+              </p>
+
+              <div className="mt-4 flex flex-col gap-2">
+                <a
+                  href="https://wa.me/2347066072561"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="font-semibold text-[#0B1B3D] hover:text-[#1E824C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1E824C]"
+                >
+                  Direct Message: +234 706 607 2561
+                </a>
+
+                <a
+                  href="https://chat.whatsapp.com/Bxzq1q2cvlK5hWxlaMjPjj"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="font-semibold text-[#0B1B3D] hover:text-[#1E824C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1E824C]"
+                >
+                  Join WhatsApp Group
+                </a>
+              </div>
+            </div>
+
             {/* Social Media */}
             <div className="mt-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
               <p className="text-sm font-bold uppercase tracking-wider text-[#1E824C]">
@@ -60,29 +110,18 @@ export default function ContactPage() {
               </p>
 
               <div className="mt-4 flex flex-wrap gap-4">
-                <a
-                  href="#"
-                  aria-label="Realise Reality Initiative on Facebook"
-                  className="font-semibold text-[#0B1B3D] hover:text-[#1E824C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1E824C]"
-                >
-                  Facebook
-                </a>
-
-                <a
-                  href="#"
-                  aria-label="Realise Reality Initiative on LinkedIn"
-                  className="font-semibold text-[#0B1B3D] hover:text-[#1E824C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1E824C]"
-                >
-                  LinkedIn
-                </a>
-
-                <a
-                  href="#"
-                  aria-label="Realise Reality Initiative on Instagram"
-                  className="font-semibold text-[#0B1B3D] hover:text-[#1E824C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1E824C]"
-                >
-                  Instagram
-                </a>
+                {socialLinks.map((social) => (
+                  <a
+                    key={social.name}
+                    href={social.href}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    aria-label={`Realise Reality Initiative on ${social.name}`}
+                    className="font-semibold text-[#0B1B3D] hover:text-[#1E824C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1E824C]"
+                  >
+                    {social.name}
+                  </a>
+                ))}
               </div>
             </div>
           </div>

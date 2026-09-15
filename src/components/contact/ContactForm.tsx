@@ -17,40 +17,35 @@ export default function ContactForm() {
     const form = event.currentTarget;
     const formData = new FormData(form);
 
-    const data = {
-      fullName: String(formData.get("fullName") || ""),
-      email: String(formData.get("email") || ""),
-      message: String(formData.get("message") || ""),
-    };
+    const fullName = String(formData.get("fullName") || "").trim();
+    const email = String(formData.get("email") || "").trim();
+    const message = String(formData.get("message") || "").trim();
 
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        setStatus("error");
-        setError(
-          result?.message ||
-            "We could not send your message. Please try again."
-        );
-        return;
-      }
-
-      setStatus("success");
-      form.reset();
-    } catch {
+    // Simple client-side validation
+    if (fullName.length < 2) {
       setStatus("error");
-      setError(
-        "Unable to connect to the server. Please check your internet connection and try again."
-      );
+      setError("Please enter your full name.");
+      return;
     }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setStatus("error");
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    if (message.length < 10) {
+      setStatus("error");
+      setError("Please enter a message of at least 10 characters.");
+      return;
+    }
+
+    // No backend yet — simulate a successful submission.
+    // Replace this with a real endpoint (Formspree, Resend, etc.) later.
+    await new Promise((resolve) => setTimeout(resolve, 600));
+
+    setStatus("success");
+    form.reset();
   }
 
   return (

@@ -2,65 +2,22 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useRef, useEffect } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { useState } from "react";
 
 const navigation = [
   { name: "Home", href: "/" },
-  { name: "About", href: "/about" },
-  { name: "Programs", href: "/programs" },
   { name: "Global Presence", href: "/global-presence" },
-  { name: "Our Team", href: "/team" },
+  { name: "Humanity", href: "/welfare" },
   { name: "Get Involved", href: "/get-involved" },
-  { name: "Insights", href: "/insights" },
+  { name: "Knowledge Centre", href: "/knowledge-centre" },
   { name: "Contact", href: "/contact" },
 ];
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [hasVideoError, setHasVideoError] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
-  const [user, setUser] = useState<any>(null);
-  const [mounted, setMounted] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    setMounted(true);
-
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
 
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
-  };
-
-  const toggleAudio = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (videoRef.current) {
-      const nextMuteState = !videoRef.current.muted;
-      videoRef.current.muted = nextMuteState;
-      setIsMuted(nextMuteState);
-
-      if (!nextMuteState) {
-        videoRef.current.play().catch((err) => {
-          console.warn("Playback failed:", err);
-          setIsMuted(true);
-          videoRef.current!.muted = true;
-        });
-      }
-    }
   };
 
   return (
@@ -77,41 +34,14 @@ export default function Navbar() {
             onClick={closeMobileMenu}
             aria-label="Realise Reality Initiative home"
           >
-            <div className="relative h-10 w-10 overflow-hidden rounded-full">
-              {!hasVideoError ? (
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  onError={() => setHasVideoError(true)}
-                  className="h-full w-full object-cover"
-                >
-                  <source
-                    src="/images/video_2026-08-31_20-53-41.mp4"
-                    type="video/mp4"
-                  />
-                  <Image
-                    src="/images/photo_2026-08-31_16-19-54.jpg"
-                    alt="Realise Reality Initiative logo"
-                    width={40}
-                    height={40}
-                    className="h-10 w-10 rounded-full object-cover"
-                    priority
-                  />
-                </video>
-              ) : (
-                <Image
-                  src="/images/photo_2026-08-31_16-19-54.jpg"
-                  alt="Realise Reality Initiative logo"
-                  width={40}
-                  height={40}
-                  className="h-10 w-10 rounded-full object-cover"
-                  priority
-                />
-              )}
-            </div>
+            <Image
+              src="/images/photo_2026-08-31_16-19-54.jpg"
+              alt="Realise Reality Initiative logo"
+              width={40}
+              height={40}
+              className="h-10 w-10 rounded-full object-cover"
+              priority
+            />
 
             <div className="hidden sm:block">
               <span className="block text-sm font-bold tracking-wide text-[#0B1B3D]">
@@ -122,52 +52,10 @@ export default function Navbar() {
               </span>
             </div>
           </Link>
-
-          {!hasVideoError && (
-            <button
-              type="button"
-              onClick={toggleAudio}
-              className="z-10 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-700 transition-all duration-150 hover:bg-[#F7B500] hover:text-[#0B1B3D] focus:outline-none focus:ring-2 focus:ring-[#F7B500]"
-              title={isMuted ? "Unmute Logo Sound" : "Mute Logo Sound"}
-              aria-label={isMuted ? "Unmute Logo Sound" : "Mute Logo Sound"}
-            >
-              {isMuted ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                  className="h-4 w-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M17.25 9.75 19.5 12m0 0 2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6 4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.414 0-.75-.336-.75-.75V9.75c0-.414.336-.75.75-.75h4.24Z"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                  className="h-4 w-4 text-[#1E824C]"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.287a6 6 0 0 1 0 8.486M11.25 5.25l-4.72 4.72H4.51c-.414 0-.75.336-.75.75v4.5c0 .414.336.75.75.75h2.02l4.72 4.72V5.25Z"
-                  />
-                </svg>
-              )}
-            </button>
-          )}
         </div>
 
         {/* Desktop Navigation */}
-        <div className="hidden items-center gap-4 lg:flex">
+        <div className="hidden items-center gap-6 lg:flex">
           {navigation.map((item) => (
             <Link
               key={item.href}
@@ -179,27 +67,11 @@ export default function Navbar() {
           ))}
 
           <Link
-            href="/login"
-            className="text-sm font-semibold text-[#0B1B3D] transition-colors hover:text-[#1E824C]"
+            href="/get-involved"
+            className="rounded-lg bg-[#F7B500] px-4 py-2 text-sm font-bold text-[#0B1B3D] transition-all duration-200 hover:bg-[#dca200]"
           >
-            Login
+            Join Us
           </Link>
-
-          {mounted && user ? (
-            <Link
-              href="/dashboard"
-              className="rounded-lg bg-[#0B1B3D] px-4 py-2 text-sm font-bold text-white transition-all duration-200 hover:bg-[#122856]"
-            >
-              Dashboard
-            </Link>
-          ) : (
-            <Link
-              href="/get-involved"
-              className="rounded-lg bg-[#F7B500] px-4 py-2 text-sm font-bold text-[#0B1B3D] transition-all duration-200 hover:bg-[#dca200]"
-            >
-              Join Us
-            </Link>
-          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -262,30 +134,12 @@ export default function Navbar() {
               ))}
 
               <Link
-                href="/login"
+                href="/get-involved"
                 onClick={closeMobileMenu}
-                className="border-b border-gray-100 px-2 py-3 text-base font-semibold text-[#0B1B3D] hover:bg-gray-50"
+                className="mt-4 rounded-lg bg-[#F7B500] px-5 py-3 text-center font-bold text-[#0B1B3D]"
               >
-                Member / Admin Login
+                Join Us
               </Link>
-
-              {mounted && user ? (
-                <Link
-                  href="/dashboard"
-                  onClick={closeMobileMenu}
-                  className="mt-4 rounded-lg bg-[#0B1B3D] px-5 py-3 text-center font-bold text-white"
-                >
-                  Dashboard
-                </Link>
-              ) : (
-                <Link
-                  href="/get-involved"
-                  onClick={closeMobileMenu}
-                  className="mt-4 rounded-lg bg-[#F7B500] px-5 py-3 text-center font-bold text-[#0B1B3D]"
-                >
-                  Join Us
-                </Link>
-              )}
             </div>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Hero() {
   return (
@@ -16,6 +17,18 @@ export default function Hero() {
 
       <div className="relative mx-auto flex min-h-[calc(100vh-4rem)] max-w-7xl items-center px-4 py-20 sm:px-6 sm:py-24 lg:px-8 lg:py-28">
         <div className="max-w-4xl">
+          {/* Image Logo */}
+          <div className="mb-8">
+            <Image
+              src="/images/photo_2026-08-31_16-19-54.jpg"
+              alt="Realise Reality Initiative logo"
+              width={96}
+              height={96}
+              className="h-24 w-24 rounded-full object-cover shadow-lg ring-4 ring-white/10"
+              priority
+            />
+          </div>
+
           {/* Eyebrow */}
           <p className="mb-5 text-sm font-bold uppercase tracking-[0.2em] text-[#F7B500] sm:text-base">
             Realise Reality Initiative

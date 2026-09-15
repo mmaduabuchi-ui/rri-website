@@ -1,14 +1,4 @@
-import type { Metadata } from "next";
 import Image from "next/image";
-import PageHero from "@/components/pages/PageHero";
-import Container from "@/components/ui/Container";
-
-export const metadata: Metadata = {
-  title: "Our Team | Realise Reality Initiative",
-  description:
-    "Meet the leadership structure and team behind Realise Reality Initiative. Committed to integrity, accountability, and meaningful impact.",
-  keywords: "RRI team, leadership, executive directors, non-profit leadership",
-};
 
 type LeadershipMember = {
   role: string;
@@ -109,19 +99,6 @@ const leadership: LeadershipMember[] = [
     ],
   },
   {
-    role: "Director of Research and Education",
-    name: "Son Agapian",
-    title: "Reflective Writer | Speaker | Creator of 'Poke Now'",
-    image: "/images/photo_2026-08-31_19-55-18.jpg",
-    bio: [
-      "Son Agapian is a reflective writer, speaker, and the voice behind 'Poke Now,' a platform for honest conversations about life, awareness, and the human experience.",
-      "His work is not about teaching people how to live but about creating space for reflection, curiosity, and direct observation. Through his writings and conversations, he invites people to question inherited assumptions and reconnect with what is already evident in everyday life.",
-      "At the heart of Poke Now is a simple expression: 'Talking to myself. Saying what you already know.' Through this approach, Son explores themes such as love, relationships, parenting, identity, responsibility, and conscious living with warmth, clarity, and authenticity.",
-      "He is also the author of several thought-provoking works, including From Shadow to Spirit, Breaking Through False Thinking Phrases, You Are Before Belief, The End of a GOD, No Other Name, Before Meaning, Two Humans, Not Two Roles, and lots more, all of which invite readers to move beyond inherited narratives and discover what remains when they observe life directly.",
-      "His hope is simple: not to provide answers, but to encourage deeper seeing and more meaningful conversations about what it means to be human.",
-    ],
-  },
-  {
     role: "Director of Community and International Development",
     name: "Eniyebo Ekpedekumor Francis",
     title: "Marine Consultant | Oil & Gas Professional | Marine Equipment Specialist",
@@ -144,115 +121,95 @@ const leadership: LeadershipMember[] = [
   },
 ];
 
-export default function TeamPage() {
+export default function TeamSection() {
   return (
-    <main>
-      <PageHero
-        eyebrow="Our Team"
-        title="People committed to advancing the vision."
-        description="Our leadership structure brings together individuals committed to integrity, accountability, collaboration, and meaningful impact."
-      />
+    <section
+      id="team"
+      className="bg-white py-20 sm:py-24 lg:py-28"
+      aria-labelledby="team-heading"
+    >
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#1E824C]">
+            Our Team
+          </p>
 
-      {/* Leadership Profiles */}
-      <section className="bg-white py-20 sm:py-24 lg:py-28">
-        <Container>
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#1E824C]">
-              Leadership
-            </p>
+          <h2
+            id="team-heading"
+            className="mt-3 text-3xl font-bold text-[#0B1B3D] sm:text-4xl"
+          >
+            People committed to advancing the vision.
+          </h2>
 
-            <h2 className="mt-3 text-3xl font-bold text-[#0B1B3D] sm:text-4xl">
-              A structure built for responsible leadership.
-            </h2>
+          <p className="mt-5 text-base leading-8 text-gray-600 sm:text-lg">
+            Our leadership structure brings together individuals committed to
+            integrity, accountability, collaboration, and meaningful impact.
+          </p>
+        </div>
 
-            <p className="mt-5 text-base leading-8 text-gray-600 sm:text-lg">
-              Our executive structure is designed to support effective
-              leadership, program delivery, communication, partnerships, and
-              organizational accountability.
-            </p>
-          </div>
-
-          <div className="mx-auto mt-14 max-w-5xl space-y-12">
-            {leadership.map((member) => (
-              <article
-                key={member.role}
-                className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
-              >
-                <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[220px_1fr] lg:gap-10">
-                  {/* Photo */}
-                  <div className="mx-auto w-40 lg:w-full">
-                    <div className="relative aspect-square w-40 overflow-hidden rounded-2xl lg:w-full">
-                      <Image
-                        src={member.image}
-                        alt={member.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Details */}
-                  <div>
-                    <h3 className="text-xl font-bold text-[#0B1B3D] sm:text-2xl">
-                      {member.name}
-                    </h3>
-
-                    <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-[#1E824C]">
-                      {member.role}
-                    </p>
-
-                    {member.title && (
-                      <p className="mt-1 text-sm text-gray-500">
-                        {member.title}
-                      </p>
-                    )}
-
-                    <div className="mt-5 space-y-4 text-sm leading-7 text-gray-600 sm:text-base">
-                      {member.bio.map((paragraph, i) => (
-                        <p key={i}>{paragraph}</p>
-                      ))}
-                    </div>
-
-                    {member.motto && (
-                      <div className="mt-6 border-l-4 border-[#F7B500] pl-5">
-                        <p className="italic font-semibold text-[#0B1B3D]">
-                          &ldquo;{member.motto}&rdquo;
-                        </p>
-                      </div>
-                    )}
+        <div className="mx-auto mt-14 max-w-5xl space-y-12">
+          {leadership.map((member) => (
+            <article
+              key={member.role}
+              className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
+            >
+              <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[220px_1fr] lg:gap-10">
+                {/* Photo */}
+                <div className="mx-auto w-40 lg:w-full">
+                  <div className="relative aspect-square w-40 overflow-hidden rounded-2xl lg:w-full">
+                    <Image
+                      src={member.image}
+                      alt={member.name}
+                      fill
+                      sizes="(max-width: 1024px) 160px, 220px"
+                      className="object-cover"
+                    />
                   </div>
                 </div>
-              </article>
-            ))}
-          </div>
-        </Container>
-      </section>
 
-      {/* Commitment */}
-      <section className="bg-[#F5F7FA] py-20 sm:py-24 lg:py-28">
-        <Container>
-          <div className="mx-auto max-w-4xl text-center">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#1E824C]">
-              Our Commitment
-            </p>
+                {/* Details */}
+                <div>
+                  <h3 className="text-xl font-bold text-[#0B1B3D] sm:text-2xl">
+                    {member.name}
+                  </h3>
 
-            <h2 className="mt-3 text-3xl font-bold text-[#0B1B3D] sm:text-4xl">
-              Leadership with integrity and accountability.
-            </h2>
+                  <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-[#1E824C]">
+                    {member.role}
+                  </p>
 
-            <p className="mt-6 text-base leading-8 text-gray-600 sm:text-lg">
-              Our team operates with integrity, accountability, and a shared
-              commitment to the mission of Realise Reality Initiative.
-            </p>
+                  {member.title && (
+                    <p className="mt-1 text-sm text-gray-500">
+                      {member.title}
+                    </p>
+                  )}
 
-            <p className="mt-5 text-base leading-8 text-gray-600 sm:text-lg">
-              As the organization grows, our leadership structure will continue
-              to evolve to support responsible governance, effective
-              collaboration, and measurable impact.
-            </p>
-          </div>
-        </Container>
-      </section>
-    </main>
+                  <div className="mt-5 space-y-4 text-sm leading-7 text-gray-600 sm:text-base">
+                    {member.bio.map((paragraph, i) => (
+                      <p key={i}>{paragraph}</p>
+                    ))}
+                  </div>
+
+                  {member.motto && (
+                    <div className="mt-6 border-l-4 border-[#F7B500] pl-5">
+                      <p className="italic font-semibold text-[#0B1B3D]">
+                        &ldquo;{member.motto}&rdquo;
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="mx-auto mt-14 max-w-3xl text-center">
+          <p className="text-base leading-8 text-gray-600 sm:text-lg">
+            As the organization grows, our leadership structure will continue
+            to evolve to support responsible governance, effective
+            collaboration, and measurable impact.
+          </p>
+        </div>
+      </div>
+    </section>
   );
 }

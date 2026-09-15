@@ -4,7 +4,9 @@ const footerSections = [
   {
     title: "Organisation",
     links: [
-      { name: "About", href: "/about" },
+      { name: "About", href: "/#about" },
+      { name: "Mission & Vision", href: "/#vision-mission-heading" },
+      { name: "Our Team", href: "/#team" },
       { name: "Global Structure", href: "/global-presence" },
     ],
   },
@@ -14,23 +16,25 @@ const footerSections = [
       { name: "Join RRI", href: "/get-involved" },
       { name: "Volunteer", href: "/get-involved#volunteer" },
       { name: "Become a Coordinator", href: "/get-involved#coordinator" },
-    ],
-  },
-  {
-    title: "Portals & Login",
-    links: [
-      { name: "Member / Admin Login", href: "/login" },
-      { name: "Member Dashboard", href: "/dashboard" },
-      { name: "Admin Dashboard", href: "/admin" },
+      { name: "Contact", href: "/contact" },
     ],
   },
   {
     title: "Programmes",
     links: [
-      { name: "Education", href: "/programs#education" },
-      { name: "Human Development", href: "/programs#development" },
-      { name: "Humanitarian Work", href: "/welfare" },
+      { name: "Programs", href: "/#programs" },
+      { name: "Humanity", href: "/welfare" },
       { name: "Events", href: "/events" },
+      { name: "Partnerships", href: "/partnerships" },
+    ],
+  },
+  {
+    title: "Knowledge Centre",
+    links: [
+      { name: "Books & Publications", href: "/knowledge-centre#books" },
+      { name: "Daily Articles", href: "/knowledge-centre#articles" },
+      { name: "Resources", href: "/knowledge-centre" },
+      { name: "Insights", href: "/insights" },
     ],
   },
   {
@@ -41,6 +45,29 @@ const footerSections = [
       { name: "Code of Conduct", href: "/code-of-conduct" },
       { name: "Safeguarding Policy", href: "/safeguarding" },
     ],
+  },
+];
+
+const socialLinks = [
+  {
+    name: "Facebook",
+    href: "https://www.facebook.com/share/1QANYQ1r6k/?mibextid=wwXIfr",
+  },
+  {
+    name: "Instagram",
+    href: "https://www.instagram.com/realiserealityinitiative?igsi=bDIxOWdxc3B2aXgw&utm_source=qr",
+  },
+  {
+    name: "TikTok",
+    href: "https://www.tiktok.com/@realiserealityinitiative",
+  },
+  {
+    name: "YouTube",
+    href: "https://youtube.com/@realiserealityinitiativerri?si=4YbCBNyTDsLrZBGO",
+  },
+  {
+    name: "WhatsApp",
+    href: "https://chat.whatsapp.com/Bxzq1q2cvlK5hWxlaMjPjj",
   },
 ];
 
@@ -86,39 +113,20 @@ export default function Footer() {
         {/* Social Links & Copyright */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-gray-400 sm:flex-row">
           <p>© {currentYear} Realise Reality Initiative. All rights reserved.</p>
-          <div className="flex gap-4 text-gray-300">
-            <a
-              href="https://facebook.com"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-white"
-            >
-              Facebook
-            </a>
-            <a
-              href="https://whatsapp.com"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-white"
-            >
-              WhatsApp
-            </a>
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-white"
-            >
-              Instagram
-            </a>
-            <a
-              href="https://youtube.com"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-white"
-            >
-              YouTube
-            </a>
+
+          <div className="flex flex-wrap items-center justify-center gap-4 text-gray-300">
+            {socialLinks.map((social) => (
+              <a
+                key={social.name}
+                href={social.href}
+                target="_blank"
+                rel="noreferrer noopener"
+                aria-label={`RRI on ${social.name}`}
+                className="transition-colors hover:text-[#F7B500]"
+              >
+                {social.name}
+              </a>
+            ))}
           </div>
         </div>
       </div>
