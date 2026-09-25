@@ -60,10 +60,10 @@ export default function ContactPage() {
               </p>
 
               <a
-                href="mailto:info@realise-reality.org"
+                href="mailto:info@realisereality.org.ng"
                 className="mt-2 inline-block break-all font-semibold text-[#0B1B3D] hover:text-[#1E824C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1E824C]"
               >
-                info@realise-reality.org
+                info@realisereality.org.ng
               </a>
             </div>
 

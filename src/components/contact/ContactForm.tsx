@@ -4,6 +4,11 @@ import { FormEvent, useState } from "react";
 
 type FormStatus = "idle" | "submitting" | "success" | "error";
 
+// Web3Forms endpoint — this key routes submissions to your inbox.
+// Dashboard: https://web3forms.com/
+const WEB3FORMS_ACCESS_KEY = "2c8ea82e-c1c1-4993-be74-91373961ee67";
+const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
+
 export default function ContactForm() {
   const [status, setStatus] = useState<FormStatus>("idle");
   const [error, setError] = useState("");
@@ -20,6 +25,15 @@ export default function ContactForm() {
     const fullName = String(formData.get("fullName") || "").trim();
     const email = String(formData.get("email") || "").trim();
     const message = String(formData.get("message") || "").trim();
+    const honeypot = String(formData.get("botcheck") || "").trim();
+
+    // Spam bots tend to fill every field, including hidden ones. If this
+    // one has a value, silently pretend to succeed without sending anything.
+    if (honeypot.length > 0) {
+      setStatus("success");
+      form.reset();
+      return;
+    }
 
     // Simple client-side validation
     if (fullName.length < 2) {
@@ -40,16 +54,50 @@ export default function ContactForm() {
       return;
     }
 
-    // No backend yet — simulate a successful submission.
-    // Replace this with a real endpoint (Formspree, Resend, etc.) later.
-    await new Promise((resolve) => setTimeout(resolve, 600));
+    try {
+      const response = await fetch(WEB3FORMS_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          name: fullName,
+          email,
+          message,
+          subject: `New contact form message from ${fullName}`,
+        }),
+      });
 
-    setStatus("success");
-    form.reset();
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "Web3Forms request failed");
+      }
+
+      setStatus("success");
+      form.reset();
+    } catch {
+      setStatus("error");
+      setError(
+        "Something went wrong sending your message. Please try again, or email us directly."
+      );
+    }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Honeypot field — hidden from real users, catches spam bots */}
+      <input
+        type="text"
+        name="botcheck"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden"
+      />
+
       {/* Full Name */}
       <div>
         <label
