@@ -155,7 +155,6 @@ export default function TeamSection() {
                 key={member.role}
                 className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-md"
               >
-                {/* Clickable header */}
                 <button
                   type="button"
                   onClick={() => toggle(index)}
@@ -164,7 +163,6 @@ export default function TeamSection() {
                   className="w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1E824C] focus-visible:ring-offset-2"
                 >
                   <div className="flex items-center gap-4 p-4 sm:gap-5 sm:p-6 md:p-7">
-                    {/* Photo thumbnail */}
                     <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full bg-gray-100 sm:h-16 sm:w-16 md:h-20 md:w-20">
                       <Image
                         src={member.image}
@@ -175,7 +173,6 @@ export default function TeamSection() {
                       />
                     </div>
 
-                    {/* Name + role */}
                     <div className="min-w-0 flex-1">
                       <h3 className="truncate text-base font-bold text-[#0B1B3D] sm:text-lg md:text-xl">
                         {member.name}
@@ -186,7 +183,6 @@ export default function TeamSection() {
                       </p>
                     </div>
 
-                    {/* Chevron indicator */}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -207,14 +203,12 @@ export default function TeamSection() {
                   </div>
                 </button>
 
-                {/* Expandable details */}
                 <div
                   id={`team-member-${index}-details`}
                   hidden={!isOpen}
                   className="border-t border-gray-100 px-4 pb-6 pt-6 sm:px-6 sm:pb-7 sm:pt-7 md:px-7"
                 >
                   <div className="grid gap-6 md:grid-cols-[180px_1fr] md:gap-8 lg:grid-cols-[220px_1fr] lg:gap-10">
-                    {/* Large photo */}
                     <div className="mx-auto w-32 sm:w-40 md:mx-0 md:w-full">
                       <div className="relative aspect-square w-32 overflow-hidden rounded-2xl bg-gray-100 sm:w-40 md:w-full">
                         <Image
@@ -227,7 +221,6 @@ export default function TeamSection() {
                       </div>
                     </div>
 
-                    {/* Bio */}
                     <div className="min-w-0">
                       {member.title && (
                         <p className="text-sm leading-6 text-gray-500">
