@@ -24,7 +24,7 @@ const sections: LegalSection[] = [
     ],
     bullets: [
       "Registered/Administrative Location: 56 Ikot Offiong Ambai, Akpabuyo LGA, Cross River State, Nigeria — Africa",
-      "Email: info@realise-reality.org",
+      "Email: realisereality@realisereality.org.ng",
       "Website: https://www.realise-reality.org",
     ],
   },
@@ -346,7 +346,7 @@ const sections: LegalSection[] = [
     ],
     bullets: [
       "Realise Reality Initiative",
-      "Email: info@realise-reality.org",
+      "Email: realisereality@realisereality.org.ng",
       "Website: https://www.realise-reality.org",
       "Address: 56 Ikot Offiong Ambai, Akpabuyo LGA, Cross River State, Nigeria — Africa",
       "Subject: Privacy/Data Protection Request",

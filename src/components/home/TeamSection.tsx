@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 
 type LeadershipMember = {
   role: string;
@@ -11,7 +14,7 @@ type LeadershipMember = {
 
 const leadership: LeadershipMember[] = [
   {
-    role: "President",
+    role: "Coordinator",
     name: "Ekpo (Collins) Bassey",
     title:
       "Writer | Creative Professional | Graphics Designer | Video Editor | Instructor | Life Coach | Community Development Advocate",
@@ -24,7 +27,7 @@ const leadership: LeadershipMember[] = [
     ],
   },
   {
-    role: "Vice President",
+    role: "Deputy Coordinator",
     name: "Greg Jackson",
     title: "Spiritual Educator | Former U.S. Marine",
     image: "/images/photo_2026-08-31_19-39-06.jpg",
@@ -99,20 +102,10 @@ const leadership: LeadershipMember[] = [
     ],
   },
   {
-    role: "Director of Community and International Development",
-    name: "Eniyebo Ekpedekumor Francis",
-    title: "Marine Consultant | Oil & Gas Professional | Marine Equipment Specialist",
-    image: "/images/photo_2026-08-31_20-04-09.jpg",
-    bio: [
-      "Eniyebo Ekpedekumor Francis is a marine consultant with a background in oil and gas. He transitioned into the marine industry, where he has expertise in marine machinery with a specialization in repairs of marine equipment and maintenance.",
-      "He is also a vendor to NIPEX, a subsidiary of NNPC.",
-      "Passionate about leveraging the marine sector to create impactful solutions, he is committed to facilitating meaningful discussions, solving real-world problems in the marine world.",
-    ],
-  },
-  {
     role: "Director of Digital Communications and Social Media",
     name: "Brian Waters",
-    title: "Global Sports Professional | Social Media & E-Commerce Educator | Entrepreneur",
+    title:
+      "Global Sports Professional | Social Media & E-Commerce Educator | Entrepreneur",
     image: "/images/photo_2026-08-31_20-09-21.jpg",
     bio: [
       "Brian Waters is a Chapel Hill, North Carolina native and Elon University Sports Management graduate who transitioned a 2009 professional basketball career into a global mission spanning 30 countries. After playing and coaching across China, Hong Kong, Australia, Saudi Arabia, Thailand, Taiwan, Canada, and Uganda, he ultimately settled in East Africa. Across eight years living in Kenya, Tanzania, Rwanda, and Uganda, he has dedicated himself to empowering African youth and students through social media and e-commerce education, using the real-world insights from his travels to bridge the gaps left by traditional curriculums.",
@@ -122,6 +115,12 @@ const leadership: LeadershipMember[] = [
 ];
 
 export default function TeamSection() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const toggle = (index: number) => {
+    setOpenIndex((prev) => (prev === index ? null : index));
+  };
+
   return (
     <section
       id="team"
@@ -147,59 +146,114 @@ export default function TeamSection() {
           </p>
         </div>
 
-        <div className="mx-auto mt-14 max-w-5xl space-y-12">
-          {leadership.map((member) => (
-            <article
-              key={member.role}
-              className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
-            >
-              <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[220px_1fr] lg:gap-10">
-                {/* Photo */}
-                <div className="mx-auto w-40 lg:w-full">
-                  <div className="relative aspect-square w-40 overflow-hidden rounded-2xl lg:w-full">
-                    <Image
-                      src={member.image}
-                      alt={member.name}
-                      fill
-                      sizes="(max-width: 1024px) 160px, 220px"
-                      className="object-cover"
-                    />
-                  </div>
-                </div>
+        <div className="mx-auto mt-14 max-w-5xl space-y-6 sm:space-y-8">
+          {leadership.map((member, index) => {
+            const isOpen = openIndex === index;
 
-                {/* Details */}
-                <div>
-                  <h3 className="text-xl font-bold text-[#0B1B3D] sm:text-2xl">
-                    {member.name}
-                  </h3>
+            return (
+              <article
+                key={member.role}
+                className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-md"
+              >
+                {/* Clickable header */}
+                <button
+                  type="button"
+                  onClick={() => toggle(index)}
+                  aria-expanded={isOpen}
+                  aria-controls={`team-member-${index}-details`}
+                  className="w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1E824C] focus-visible:ring-offset-2"
+                >
+                  <div className="flex items-center gap-4 p-4 sm:gap-5 sm:p-6 md:p-7">
+                    {/* Photo thumbnail */}
+                    <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full bg-gray-100 sm:h-16 sm:w-16 md:h-20 md:w-20">
+                      <Image
+                        src={member.image}
+                        alt={member.name}
+                        fill
+                        sizes="(max-width: 640px) 56px, (max-width: 768px) 64px, 80px"
+                        className="object-cover"
+                      />
+                    </div>
 
-                  <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-[#1E824C]">
-                    {member.role}
-                  </p>
+                    {/* Name + role */}
+                    <div className="min-w-0 flex-1">
+                      <h3 className="truncate text-base font-bold text-[#0B1B3D] sm:text-lg md:text-xl">
+                        {member.name}
+                      </h3>
 
-                  {member.title && (
-                    <p className="mt-1 text-sm text-gray-500">
-                      {member.title}
-                    </p>
-                  )}
-
-                  <div className="mt-5 space-y-4 text-sm leading-7 text-gray-600 sm:text-base">
-                    {member.bio.map((paragraph, i) => (
-                      <p key={i}>{paragraph}</p>
-                    ))}
-                  </div>
-
-                  {member.motto && (
-                    <div className="mt-6 border-l-4 border-[#F7B500] pl-5">
-                      <p className="italic font-semibold text-[#0B1B3D]">
-                        &ldquo;{member.motto}&rdquo;
+                      <p className="mt-0.5 truncate text-xs font-semibold uppercase tracking-wide text-[#1E824C] sm:text-sm">
+                        {member.role}
                       </p>
                     </div>
-                  )}
+
+                    {/* Chevron indicator */}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2}
+                      stroke="currentColor"
+                      aria-hidden="true"
+                      className={`h-5 w-5 shrink-0 text-[#0B1B3D] transition-transform duration-300 sm:h-6 sm:w-6 ${
+                        isOpen ? "rotate-180" : ""
+                      }`}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="m19.5 8.25-7.5 7.5-7.5-7.5"
+                      />
+                    </svg>
+                  </div>
+                </button>
+
+                {/* Expandable details */}
+                <div
+                  id={`team-member-${index}-details`}
+                  hidden={!isOpen}
+                  className="border-t border-gray-100 px-4 pb-6 pt-6 sm:px-6 sm:pb-7 sm:pt-7 md:px-7"
+                >
+                  <div className="grid gap-6 md:grid-cols-[180px_1fr] md:gap-8 lg:grid-cols-[220px_1fr] lg:gap-10">
+                    {/* Large photo */}
+                    <div className="mx-auto w-32 sm:w-40 md:mx-0 md:w-full">
+                      <div className="relative aspect-square w-32 overflow-hidden rounded-2xl bg-gray-100 sm:w-40 md:w-full">
+                        <Image
+                          src={member.image}
+                          alt={member.name}
+                          fill
+                          sizes="(max-width: 640px) 128px, (max-width: 768px) 160px, (max-width: 1024px) 180px, 220px"
+                          className="object-cover"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Bio */}
+                    <div className="min-w-0">
+                      {member.title && (
+                        <p className="text-sm leading-6 text-gray-500">
+                          {member.title}
+                        </p>
+                      )}
+
+                      <div className="mt-4 space-y-3 text-sm leading-7 text-gray-600 sm:mt-5 sm:space-y-4 sm:text-base">
+                        {member.bio.map((paragraph, i) => (
+                          <p key={i}>{paragraph}</p>
+                        ))}
+                      </div>
+
+                      {member.motto && (
+                        <div className="mt-5 border-l-4 border-[#F7B500] pl-4 sm:mt-6 sm:pl-5">
+                          <p className="text-sm font-semibold italic text-[#0B1B3D] sm:text-base">
+                            &ldquo;{member.motto}&rdquo;
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
 
         <div className="mx-auto mt-14 max-w-3xl text-center">
