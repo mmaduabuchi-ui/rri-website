@@ -106,7 +106,7 @@ export async function POST(request: Request) {
       kind: article.kind,
       category: article.category,
       cover_url: article.cover_url,
-      status: article.published ? "published" : "draft",
+       published: article.published,
     })
     .select()
     .single();
