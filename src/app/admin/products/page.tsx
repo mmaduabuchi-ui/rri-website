@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
+import DeleteProductButton from "@/components/admin/DeleteProductButton";
 
 const typeBadgeStyles: Record<string, string> = {
   free: "bg-green-100 text-green-800",
@@ -42,6 +43,7 @@ export default async function AdminProductsPage() {
                 <th className="px-5 py-4">Media</th>
                 <th className="px-5 py-4">Price</th>
                 <th className="px-5 py-4">Created</th>
+                <th className="px-5 py-4">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -54,19 +56,34 @@ export default async function AdminProductsPage() {
                     <td className="px-5 py-4 font-medium">{product.title}</td>
                     <td className="px-5 py-4">
                       <span
-                        className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${typeBadgeStyles[type] ?? "bg-gray-100 text-gray-700"}`}
+                        className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${
+                          typeBadgeStyles[type] ?? "bg-gray-100 text-gray-700"
+                        }`}
                       >
                         {type || "—"}
                       </span>
                     </td>
                     <td className="px-5 py-4 capitalize">{String(media)}</td>
                     <td className="px-5 py-4">
-                      {product.price == null ? "—" : `$${Number(product.price).toFixed(2)}`}
+                      {product.price == null
+                        ? "—"
+                        : `$${Number(product.price).toFixed(2)}`}
                     </td>
                     <td className="px-5 py-4">
                       {product.created_at
                         ? new Date(product.created_at).toLocaleDateString()
                         : "—"}
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-4">
+                        <Link
+                          href={`/admin/products/${product.id}/edit`}
+                          className="text-sm font-semibold text-[#1E824C] hover:underline"
+                        >
+                          Edit
+                        </Link>
+                        <DeleteProductButton productId={product.id} />
+                      </div>
                     </td>
                   </tr>
                 );

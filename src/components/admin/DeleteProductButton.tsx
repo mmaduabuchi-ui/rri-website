@@ -13,6 +13,10 @@ export default function DeleteProductButton({
   const [errorMessage, setErrorMessage] = useState("");
 
   async function handleDelete() {
+    if (!window.confirm("Delete this product?")) {
+      return;
+    }
+
     setErrorMessage("");
     setIsDeleting(true);
 
