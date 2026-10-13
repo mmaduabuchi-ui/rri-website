@@ -4,7 +4,6 @@ import Image from "next/image";
 export default function Hero() {
   return (
     <section className="relative overflow-hidden bg-[#0B1B3D]">
-      {/* Decorative background elements */}
       <div
         className="pointer-events-none absolute -right-32 -top-32 h-80 w-80 rounded-full bg-[#1E824C]/20 blur-3xl"
         aria-hidden="true"
@@ -16,15 +15,15 @@ export default function Hero() {
       />
 
       <div className="relative mx-auto flex min-h-[calc(100vh-4rem)] max-w-7xl items-center px-4 py-20 sm:px-6 sm:py-24 lg:px-8 lg:py-28">
-        <div className="max-w-4xl">
-          {/* Image Logo */}
-          <div className="mb-8">
+        <div className="w-full max-w-4xl">
+          {/* Logo — capped so it doesn't pass the "See Life Clearly." line */}
+          <div className="mb-8 max-w-md sm:max-w-lg lg:max-w-2xl">
             <Image
               src="/images/photo_2026-08-31_16-19-54.jpg"
               alt="Realise Reality Initiative logo"
-              width={96}
-              height={96}
-              className="h-24 w-24 rounded-full object-cover shadow-lg ring-4 ring-white/10"
+              width={1200}
+              height={400}
+              className="h-auto w-full object-contain"
               priority
             />
           </div>
@@ -35,7 +34,7 @@ export default function Hero() {
           </p>
 
           {/* Main heading */}
-          <h1 className="max-w-4xl text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl lg:text-7xl">
+          <h1 className="text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl lg:text-7xl">
             See Life Clearly.
             <span className="block">Live Intentionally.</span>
             <span className="block text-[#F7B500]">Impact Globally.</span>
