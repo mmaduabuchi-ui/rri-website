@@ -56,31 +56,53 @@ export default async function AdminPage() {
 
         <section className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-[#0B1B3D]">
-              Website management
-            </h2>
+            <h2 className="text-lg font-semibold text-[#0B1B3D]">Content</h2>
             <p className="mt-2 text-sm leading-6 text-gray-600">
-              This section will provide tools for managing website content.
+              Create and update articles and website content.
             </p>
+            <Link href="/admin/articles" className="mt-4 inline-flex font-medium text-[#1E824C] hover:underline">
+              Manage →
+            </Link>
           </div>
 
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-[#0B1B3D]">
-              Programme management
-            </h2>
+            <h2 className="text-lg font-semibold text-[#0B1B3D]">Products</h2>
             <p className="mt-2 text-sm leading-6 text-gray-600">
-              This section will provide tools for managing programmes, events
-              and community activities.
+              Manage the products available through the initiative.
             </p>
+            <Link href="/admin/products" className="mt-4 inline-flex font-medium text-[#1E824C] hover:underline">
+              Manage →
+            </Link>
           </div>
 
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-[#0B1B3D]">
-              Member management
-            </h2>
+            <h2 className="text-lg font-semibold text-[#0B1B3D]">Members</h2>
             <p className="mt-2 text-sm leading-6 text-gray-600">
-              This section will provide tools for managing registered members.
+              View and manage registered initiative members.
             </p>
+            <Link href="/admin/members" className="mt-4 inline-flex font-medium text-[#1E824C] hover:underline">
+              Manage →
+            </Link>
+          </div>
+
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-[#0B1B3D]">Access</h2>
+            <p className="mt-2 text-sm leading-6 text-gray-600">
+              Review and manage administrative access.
+            </p>
+            <Link href="/admin/access" className="mt-4 inline-flex font-medium text-[#1E824C] hover:underline">
+              Manage →
+            </Link>
+          </div>
+
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-[#0B1B3D]">Settings</h2>
+            <p className="mt-2 text-sm leading-6 text-gray-600">
+              Configure administrative and website preferences.
+            </p>
+            <Link href="/admin/settings" className="mt-4 inline-flex font-medium text-[#1E824C] hover:underline">
+              Manage →
+            </Link>
           </div>
         </section>
 
