@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import AuthButton from "./AuthButton";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -66,12 +67,7 @@ export default function Navbar() {
             </Link>
           ))}
 
-          <Link
-            href="/get-involved"
-            className="rounded-lg bg-[#F7B500] px-4 py-2 text-sm font-bold text-[#0B1B3D] transition-all duration-200 hover:bg-[#dca200]"
-          >
-            Join Us
-          </Link>
+          <AuthButton />
         </div>
 
         {/* Mobile Menu Button */}
@@ -133,13 +129,9 @@ export default function Navbar() {
                 </Link>
               ))}
 
-              <Link
-                href="/get-involved"
-                onClick={closeMobileMenu}
-                className="mt-4 rounded-lg bg-[#F7B500] px-5 py-3 text-center font-bold text-[#0B1B3D]"
-              >
-                Join Us
-              </Link>
+              <div className="mt-4" onClick={closeMobileMenu}>
+                <AuthButton />
+              </div>
             </div>
           </div>
         </div>
