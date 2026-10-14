@@ -23,6 +23,7 @@ function parseArticleInput(value: unknown): ArticleInput | null {
   }
 
   const { title, excerpt, body, kind, category, cover_url, published } = value;
+
   if (
     typeof title !== "string" ||
     !title.trim() ||
@@ -79,14 +80,20 @@ export async function POST(request: Request) {
     );
   }
   if (profile?.role !== "admin") {
-    return Response.json({ error: "Administrator access required." }, { status: 403 });
+    return Response.json(
+      { error: "Administrator access required." },
+      { status: 403 },
+    );
   }
 
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return Response.json({ error: "Request body must be valid JSON." }, { status: 400 });
+    return Response.json(
+      { error: "Request body must be valid JSON." },
+      { status: 400 },
+    );
   }
 
   const article = parseArticleInput(body);
@@ -106,7 +113,7 @@ export async function POST(request: Request) {
       kind: article.kind,
       category: article.category,
       cover_url: article.cover_url,
-       published: article.published,
+      status: article.published ? "published" : "draft",
     })
     .select()
     .single();

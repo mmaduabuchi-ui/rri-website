@@ -1,6 +1,7 @@
 import Hero from "@/components/home/Hero";
 import VideoLogo from "@/components/home/VideoLogo";
 import Introduction from "@/components/home/Introduction";
+import LatestUpdates from "@/components/home/LatestUpdates";
 import AboutSection from "@/components/home/AboutSection";
 import ProgramsSection from "@/components/home/ProgramsSection";
 import TeamSection from "@/components/home/TeamSection";
@@ -13,6 +14,7 @@ export default function Home() {
       <Hero />
       <VideoLogo />
       <Introduction />
+      <LatestUpdates />
       <AboutSection />
       <ProgramsSection />
       <TeamSection />

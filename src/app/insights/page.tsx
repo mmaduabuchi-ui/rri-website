@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import PageHero from "@/components/pages/PageHero";
 import Container from "@/components/ui/Container";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Insights & Resources | Realise Reality Initiative",
@@ -60,7 +62,14 @@ const topics = [
   },
 ];
 
-export default function InsightsPage() {
+export default async function InsightsPage() {
+  const supabase = await createClient();
+  const { data: articles } = await supabase
+    .from("articles")
+    .select("id, kind, title, excerpt, created_at")
+    .eq("status", "published")
+    .order("created_at", { ascending: false });
+
   return (
     <main>
       <PageHero
@@ -142,6 +151,60 @@ export default function InsightsPage() {
               </article>
             ))}
           </div>
+        </Container>
+      </section>
+
+      {/* Latest Articles */}
+      <section
+        className="bg-white py-20 sm:py-24 lg:py-28"
+        aria-labelledby="articles-heading"
+      >
+        <Container>
+          <div className="mb-10">
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#1E824C]">
+              Read & Explore
+            </p>
+            <h2
+              id="articles-heading"
+              className="mt-3 text-3xl font-bold text-[#0B1B3D] sm:text-4xl"
+            >
+              Latest Articles
+            </h2>
+          </div>
+
+          {articles?.length ? (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {articles.map((article) => (
+                <Link
+                  key={article.id}
+                  href={`/insights/${article.id}`}
+                  className="group rounded-2xl border border-gray-200 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1E824C] focus-visible:ring-offset-2"
+                >
+                  <span className="inline-flex rounded-full bg-[#F5F7FA] px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#1E824C]">
+                    {article.kind}
+                  </span>
+                  <h3 className="mt-5 text-xl font-bold text-[#0B1B3D] group-hover:text-[#1E824C]">
+                    {article.title}
+                  </h3>
+                  <p className="mt-3 leading-7 text-gray-600">
+                    {article.excerpt}
+                  </p>
+                  <time
+                    className="mt-6 block text-sm text-gray-500"
+                    dateTime={article.created_at}
+                  >
+                    {new Date(article.created_at).toLocaleDateString("en", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </time>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-600">No articles yet.</p>
+          )}
         </Container>
       </section>
 
