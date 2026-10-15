@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import FileUploadField from "@/components/admin/FileUploadField";
 
 type ProductType = "free" | "paid" | "donation";
 type MediaType = "video" | "audio" | "text" | "link";
@@ -17,8 +18,16 @@ export default function NewProductPage() {
   const [coverUrl, setCoverUrl] = useState("");
   const [content, setContent] = useState("");
   const [externalUrl, setExternalUrl] = useState("");
+  const [storagePath, setStoragePath] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // A stable product ID for this session. Generated once on mount.
+  const [draftProductId] = useState<string>(() =>
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `draft-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
+  );
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -38,6 +47,12 @@ export default function NewProductPage() {
           cover_url: coverUrl,
           content: mediaType === "text" ? content : null,
           external_url: mediaType === "link" ? externalUrl : null,
+          storage_path:
+            mediaType === "video" ||
+            mediaType === "audio" ||
+            mediaType === "text"
+              ? storagePath
+              : null,
         }),
       });
 
@@ -150,9 +165,9 @@ export default function NewProductPage() {
                 }
                 className={inputClassName}
               >
+                <option value="text">Text</option>
                 <option value="video">Video</option>
                 <option value="audio">Audio</option>
-                <option value="text">Text</option>
                 <option value="link">Link</option>
               </select>
             </div>
@@ -192,19 +207,55 @@ export default function NewProductPage() {
           </div>
 
           {mediaType === "text" && (
-            <div>
-              <label htmlFor="content" className={labelClassName}>
-                Content
-              </label>
-              <textarea
-                id="content"
-                name="content"
-                rows={8}
-                value={content}
-                onChange={(event) => setContent(event.target.value)}
-                className={inputClassName}
+            <>
+              <div>
+                <label htmlFor="content" className={labelClassName}>
+                  Content
+                </label>
+                <textarea
+                  id="content"
+                  name="content"
+                  rows={8}
+                  value={content}
+                  onChange={(event) => setContent(event.target.value)}
+                  className={inputClassName}
+                />
+              </div>
+
+              <FileUploadField
+                productId={draftProductId}
+                productType={type}
+                accept="application/pdf"
+                label="Optional PDF attachment"
+                hint="Attach a downloadable PDF version of this content (max 50 MB)."
+                currentPath={storagePath}
+                onUploaded={(path) => setStoragePath(path)}
               />
-            </div>
+            </>
+          )}
+
+          {mediaType === "video" && (
+            <FileUploadField
+              productId={draftProductId}
+              productType={type}
+              accept="video/mp4,video/webm,video/quicktime"
+              label="Video file"
+              hint="MP4, WebM, or MOV. Max 50 MB."
+              currentPath={storagePath}
+              onUploaded={(path) => setStoragePath(path)}
+            />
+          )}
+
+          {mediaType === "audio" && (
+            <FileUploadField
+              productId={draftProductId}
+              productType={type}
+              accept="audio/mpeg,audio/mp4,audio/wav,audio/ogg"
+              label="Audio file"
+              hint="MP3, M4A, WAV, or OGG. Max 50 MB."
+              currentPath={storagePath}
+              onUploaded={(path) => setStoragePath(path)}
+            />
           )}
 
           {mediaType === "link" && (

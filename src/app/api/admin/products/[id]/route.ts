@@ -1,3 +1,4 @@
+// src/app/api/admin/products/[id]/route.ts
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -89,6 +90,8 @@ export async function PATCH(
     content: typeof payload.content === "string" ? payload.content : null,
     external_url:
       typeof payload.external_url === "string" ? payload.external_url : null,
+    storage_path:
+      typeof payload.storage_path === "string" ? payload.storage_path : null,
   };
 
   const { id } = await params;

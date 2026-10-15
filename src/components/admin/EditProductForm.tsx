@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import FileUploadField from "@/components/admin/FileUploadField";
 
 type ProductType = "free" | "paid" | "donation";
 type MediaType = "video" | "audio" | "text" | "link";
@@ -18,6 +19,7 @@ export type EditableProduct = {
   cover_url: string | null;
   content: string | null;
   external_url: string | null;
+  storage_path: string | null;
 };
 
 export default function EditProductForm({
@@ -38,6 +40,9 @@ export default function EditProductForm({
   const [coverUrl, setCoverUrl] = useState(product.cover_url ?? "");
   const [content, setContent] = useState(product.content ?? "");
   const [externalUrl, setExternalUrl] = useState(product.external_url ?? "");
+  const [storagePath, setStoragePath] = useState<string | null>(
+    product.storage_path,
+  );
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -59,6 +64,7 @@ export default function EditProductForm({
           cover_url: coverUrl,
           content: mediaType === "text" ? content : null,
           external_url: mediaType === "link" ? externalUrl : null,
+          storage_path: storagePath,
         }),
       });
 
@@ -147,9 +153,9 @@ export default function EditProductForm({
             onChange={(event) => setMediaType(event.target.value as MediaType)}
             className={fieldClass}
           >
+            <option value="text">Text</option>
             <option value="video">Video</option>
             <option value="audio">Audio</option>
-            <option value="text">Text</option>
             <option value="link">Link</option>
           </select>
         </div>
@@ -186,18 +192,54 @@ export default function EditProductForm({
       </div>
 
       {mediaType === "text" && (
-        <div>
-          <label htmlFor="content" className={labelClass}>
-            Content
-          </label>
-          <textarea
-            id="content"
-            rows={8}
-            value={content}
-            onChange={(event) => setContent(event.target.value)}
-            className={fieldClass}
+        <>
+          <div>
+            <label htmlFor="content" className={labelClass}>
+              Content
+            </label>
+            <textarea
+              id="content"
+              rows={8}
+              value={content}
+              onChange={(event) => setContent(event.target.value)}
+              className={fieldClass}
+            />
+          </div>
+
+          <FileUploadField
+            productId={product.id}
+            productType={type}
+            accept="application/pdf"
+            label="Optional PDF attachment"
+            hint="Attach a downloadable PDF version of this content (max 50 MB)."
+            currentPath={storagePath}
+            onUploaded={(path) => setStoragePath(path)}
           />
-        </div>
+        </>
+      )}
+
+      {mediaType === "video" && (
+        <FileUploadField
+          productId={product.id}
+          productType={type}
+          accept="video/mp4,video/webm,video/quicktime"
+          label="Video file"
+          hint="MP4, WebM, or MOV. Max 50 MB."
+          currentPath={storagePath}
+          onUploaded={(path) => setStoragePath(path)}
+        />
+      )}
+
+      {mediaType === "audio" && (
+        <FileUploadField
+          productId={product.id}
+          productType={type}
+          accept="audio/mpeg,audio/mp4,audio/wav,audio/ogg"
+          label="Audio file"
+          hint="MP3, M4A, WAV, or OGG. Max 50 MB."
+          currentPath={storagePath}
+          onUploaded={(path) => setStoragePath(path)}
+        />
       )}
 
       {mediaType === "link" && (

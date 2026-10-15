@@ -1,8 +1,9 @@
 // src/app/knowledge-centre/[productId]/page.tsx
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import Container from "@/components/ui/Container";
 import ProductPlayer from "@/components/knowledge/ProductPlayer";
+import LockedProductActions from "@/components/products/LockedProductActions";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -62,25 +63,15 @@ export default async function ProductDetailPage({ params }: PageProps) {
             </h1>
             <p className="mt-4 leading-7 text-gray-600">
               {user
-                ? "You do not have access to this resource yet. Contact RRI to request access."
+                ? "You do not have access to this resource yet. Complete a payment to unlock it."
                 : "Sign in to your account to view this resource, or contact RRI to request access."}
             </p>
-            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-              {!user && (
-                <Link
-                  href="/login"
-                  className="inline-flex min-h-12 items-center justify-center rounded-lg bg-[#F7B500] px-7 py-3.5 font-bold text-[#0B1B3D] transition-colors hover:bg-[#dca200]"
-                >
-                  Sign in
-                </Link>
-              )}
-              <Link
-                href="/knowledge-centre"
-                className="inline-flex min-h-12 items-center justify-center rounded-lg border-2 border-[#1E824C] px-7 py-3.5 font-semibold text-[#1E824C] transition-colors hover:bg-[#1E824C] hover:text-white"
-              >
-                Back to Knowledge Centre
-              </Link>
-            </div>
+
+            <LockedProductActions
+              productId={p.id}
+              productTitle={p.title}
+              isSignedIn={Boolean(user)}
+            />
           </div>
         </Container>
       </main>
