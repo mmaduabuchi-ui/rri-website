@@ -1,98 +1,27 @@
+// src/app/knowledge-centre/page.tsx
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import PageHero from "@/components/pages/PageHero";
 import Container from "@/components/ui/Container";
 import LibraryGrid from "@/components/knowledge/LibraryGrid";
 import ArticlesList from "@/components/knowledge/ArticlesList";
 import { createClient } from "@/lib/supabase/server";
+import { getProducts } from "@/lib/products";
+import { getArticles } from "@/lib/articles";
+
+export const dynamic = "force-dynamic";
 
 export default async function KnowledgeCentrePage() {
   const supabase = await createClient();
   const {
     data: { user },
-    error: authError,
   } = await supabase.auth.getUser();
 
-  if (authError) {
-    throw new Error(`Unable to verify your session: ${authError.message}`);
-  }
+  const [products, articles] = await Promise.all([
+    getProducts(),
+    getArticles(),
+  ]);
 
-  if (!user) {
-    return (
-      <main>
-        <PageHero
-          eyebrow="Knowledge Centre"
-          title="Members-only resources."
-          description="Sign in with an approved RRI member account to access our library of books, guides, workbooks, and daily articles."
-        />
-
-        <section className="bg-[#F5F7FA] py-20 sm:py-24">
-          <Container>
-            <div className="mx-auto max-w-2xl rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm sm:p-12">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#0B1B3D] text-2xl text-[#F7B500]">
-                🔒
-              </div>
-
-              <h2 className="mt-5 text-2xl font-bold text-[#0B1B3D] sm:text-3xl">
-                This area is for members.
-              </h2>
-
-              <p className="mt-4 leading-7 text-gray-600">
-                The Knowledge Centre contains our growing library of books,
-                workbooks, guides, and daily articles — designed to help you
-                think clearly, live consciously, and grow meaningfully.
-              </p>
-
-              <p className="mt-3 leading-7 text-gray-600">
-                Access is available after an administrator approves your
-                membership.
-              </p>
-
-              <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
-                <Link
-                  href="/login"
-                  className="inline-flex min-h-12 items-center justify-center rounded-lg bg-[#F7B500] px-7 py-3.5 font-bold text-[#0B1B3D] transition-colors hover:bg-[#dca200] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F7B500] focus-visible:ring-offset-2"
-                >
-                  Sign in
-                </Link>
-
-                <Link
-                  href="/register"
-                  className="inline-flex min-h-12 items-center justify-center rounded-lg border-2 border-[#1E824C] px-7 py-3.5 font-semibold text-[#1E824C] transition-colors hover:bg-[#1E824C] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1E824C] focus-visible:ring-offset-2"
-                >
-                  Create an account
-                </Link>
-
-                <Link
-                  href="/"
-                  className="inline-flex min-h-12 items-center justify-center rounded-lg border-2 border-[#1E824C] px-7 py-3.5 font-semibold text-[#1E824C] transition-colors hover:bg-[#1E824C] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1E824C] focus-visible:ring-offset-2"
-                >
-                  Back to Home
-                </Link>
-              </div>
-            </div>
-          </Container>
-        </section>
-      </main>
-    );
-  }
-
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("role, membership_status")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  if (profileError) {
-    throw new Error(`Unable to verify membership: ${profileError.message}`);
-  }
-
-  if (
-    profile?.role !== "admin" &&
-    profile?.membership_status !== "approved"
-  ) {
-    redirect("/membership-pending");
-  }
+  const isSignedIn = Boolean(user);
 
   return (
     <main>
@@ -127,7 +56,18 @@ export default async function KnowledgeCentrePage() {
             </p>
           </div>
 
-          <LibraryGrid />
+          <LibraryGrid items={products} isSignedIn={isSignedIn} />
+
+          {!isSignedIn && (
+            <div className="mt-12 flex justify-center">
+              <Link
+                href="/register"
+                className="inline-flex min-h-12 items-center justify-center rounded-lg bg-[#F7B500] px-7 py-3.5 font-bold text-[#0B1B3D] transition-colors hover:bg-[#dca200]"
+              >
+                Create an account to unlock paid resources
+              </Link>
+            </div>
+          )}
         </Container>
       </section>
 
@@ -156,17 +96,7 @@ export default async function KnowledgeCentrePage() {
             </p>
           </div>
 
-          <ArticlesList />
-        </Container>
-      </section>
-
-      {/* Access note */}
-      <section className="bg-white py-12">
-        <Container>
-          <p className="mx-auto max-w-2xl text-center text-xs leading-6 text-gray-500">
-            Knowledge Centre access is available to signed-in members whose
-            membership has been approved.
-          </p>
+          <ArticlesList items={articles} />
         </Container>
       </section>
     </main>

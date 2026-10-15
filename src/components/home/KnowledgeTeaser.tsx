@@ -1,8 +1,34 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function KnowledgeTeaser() {
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const supabase = createClient();
+    let isMounted = true;
+
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (isMounted) setIsSignedIn(Boolean(user));
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (isMounted) setIsSignedIn(Boolean(session?.user));
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
   return (
     <section className="bg-[#0B1B3D] py-20 sm:py-24 lg:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -23,23 +49,21 @@ export default function KnowledgeTeaser() {
 
           <div className="mt-9 flex flex-col justify-center gap-4 sm:flex-row">
             <Link
-              href="/get-involved"
-              className="inline-flex min-h-12 items-center justify-center rounded-lg bg-[#F7B500] px-7 py-3.5 text-base font-bold text-[#0B1B3D] transition-colors duration-200 hover:bg-[#dca200] focus-visible:ring-2 focus-visible:ring-[#F7B500] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B1B3D]"
-            >
-              Learn how to join
-            </Link>
-
-            <Link
               href="/knowledge-centre"
-              className="inline-flex min-h-12 items-center justify-center rounded-lg border border-white/30 px-7 py-3.5 text-base font-semibold text-white transition-colors duration-200 hover:border-white hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B1B3D]"
+              className="inline-flex min-h-12 items-center justify-center rounded-lg bg-[#F7B500] px-7 py-3.5 text-base font-bold text-[#0B1B3D] transition-colors duration-200 hover:bg-[#dca200]"
             >
-              Learn More
+              Enter Knowledge Centre
             </Link>
-          </div>
 
-          <p className="mt-6 text-xs text-gray-400">
-            Member resources require an account with approved membership.
-          </p>
+            {mounted && !isSignedIn && (
+              <Link
+                href="/register"
+                className="inline-flex min-h-12 items-center justify-center rounded-lg border border-white/30 px-7 py-3.5 text-base font-semibold text-white transition-colors duration-200 hover:border-white hover:bg-white/10"
+              >
+                Create an account
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </section>
