@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireApprovedMember } from "@/lib/auth/approved-member";
@@ -17,6 +16,11 @@ export default async function DashboardPage() {
   if (!profile) redirect("/login");
 
   const links = [
+    {
+      title: "Member Chat",
+      description: "Talk with other members of the RRI community.",
+      href: "/dashboard/chat",
+    },
     {
       title: "Knowledge Centre",
       description: "Explore articles, books, publications, and resources.",
