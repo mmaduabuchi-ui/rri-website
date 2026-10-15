@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Product } from "@/lib/products";
 
@@ -14,6 +15,38 @@ const typeLabels: Record<string, string> = {
   paid: "Paid",
   donation: "Donation",
 };
+
+/**
+ * Returns true only when `value` is a valid absolute http(s) URL.
+ * Guards against malformed data like "http:/ffghhh" that would otherwise
+ * crash next/image or render a broken link.
+ */
+function isValidUrl(value: string | null | undefined): value is string {
+  if (!value) return false;
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Picks the right action label based on how the product is consumed.
+ */
+function actionLabel(mediaType: string | null | undefined): string {
+  switch (mediaType) {
+    case "video":
+      return "Watch";
+    case "audio":
+      return "Listen";
+    case "link":
+      return "Open Resource";
+    case "text":
+    default:
+      return "Read";
+  }
+}
 
 export default function LibraryGrid({ items, isSignedIn }: Props) {
   const [filter, setFilter] = useState<"all" | "free" | "paid" | "donation">(
@@ -78,13 +111,16 @@ function ProductCard({
   isSignedIn: boolean;
 }) {
   const isLocked = !product.has_access && product.type !== "free";
+  const hasValidCover = isValidUrl(product.cover_url);
+  const label = actionLabel(product.media_type);
+  const detailHref = `/knowledge-centre/${product.id}`;
 
   return (
     <article className="flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
       <div className="relative aspect-4/3 w-full bg-[#F5F7FA]">
-        {product.cover_url ? (
+        {hasValidCover ? (
           <Image
-            src={product.cover_url}
+            src={product.cover_url as string}
             alt={product.title}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -119,50 +155,29 @@ function ProductCard({
                 ? "You do not have access to this resource yet."
                 : "Sign in or unlock to access this resource."}
             </p>
-            <button
-              type="button"
-              disabled
-              className="inline-flex min-h-11 cursor-not-allowed items-center justify-center rounded-lg bg-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-500"
-            >
-              🔒 Locked
-            </button>
+            {isSignedIn ? (
+              <Link
+                href={detailHref}
+                className="inline-flex min-h-11 items-center justify-center rounded-lg bg-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-300"
+              >
+                🔒 View details
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#F7B500] px-5 py-2.5 text-sm font-bold text-[#0B1B3D] transition-colors hover:bg-[#dca200]"
+              >
+                Sign in to unlock
+              </Link>
+            )}
           </div>
-        ) : product.type === "paid" && !isSignedIn ? (
-          <a
-            href="/login"
-            className="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg bg-[#F7B500] px-5 py-2.5 text-sm font-bold text-[#0B1B3D] transition-colors hover:bg-[#dca200]"
-          >
-            Unlock
-          </a>
-        ) : product.storage_path ? (
-          <a
-            href={`/api/download/${product.id}`}
-            className="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg bg-[#1E824C] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#16663A]"
-          >
-            Download
-          </a>
-        ) : product.external_url ? (
-          <a
-            href={product.external_url}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg bg-[#1E824C] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#16663A]"
-          >
-            Open Resource
-          </a>
-        ) : product.content ? (
-          <details className="mt-6">
-            <summary className="cursor-pointer text-sm font-semibold text-[#1E824C] hover:underline">
-              Read content
-            </summary>
-            <div className="mt-3 whitespace-pre-wrap text-sm leading-7 text-gray-700">
-              {product.content}
-            </div>
-          </details>
         ) : (
-          <p className="mt-6 text-xs text-gray-400">
-            No file attached yet.
-          </p>
+          <Link
+            href={detailHref}
+            className="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg bg-[#1E824C] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#16663A]"
+          >
+            {label}
+          </Link>
         )}
       </div>
     </article>

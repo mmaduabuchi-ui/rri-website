@@ -12,9 +12,10 @@ export default function AuthButton() {
     let isMounted = true;
 
     supabase.auth.getUser().then(({ data: { user }, error }) => {
-      if (error) {
+      // "Auth session missing!" is expected when no user is signed in.
+      // It is not a real error, so do not log it.
+      if (error && error.message !== "Auth session missing!") {
         console.error("Unable to get current Supabase user:", error.message);
-        return;
       }
 
       if (isMounted) {
