@@ -68,7 +68,7 @@ export async function proxy(request: NextRequest) {
     error: authError,
   } = await supabase.auth.getUser();
 
-  if (authError) {
+  if (authError && authError.name !== "AuthSessionMissingError") {
     return withRefreshedCookies(
       NextResponse.json(
         { error: "Unable to verify your session." },

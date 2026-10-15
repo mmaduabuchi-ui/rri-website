@@ -11,16 +11,18 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [confirmationMessage, setConfirmationMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setErrorMessage("");
+    setConfirmationMessage("");
     setIsSubmitting(true);
 
     try {
       const supabase = createClient();
-            const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -31,6 +33,13 @@ export default function RegisterPage() {
 
       if (error) {
         setErrorMessage(error.message);
+        return;
+      }
+
+      if (!data.session) {
+        setConfirmationMessage(
+          "Your account was created. Check your email to confirm your address before logging in.",
+        );
         return;
       }
 
@@ -123,6 +132,15 @@ export default function RegisterPage() {
               className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700"
             >
               {errorMessage}
+            </p>
+          )}
+
+          {confirmationMessage && (
+            <p
+              role="status"
+              className="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-800"
+            >
+              {confirmationMessage}
             </p>
           )}
 

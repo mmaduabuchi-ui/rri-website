@@ -18,6 +18,8 @@ export default function MembershipForm() {
 
   const [submitted, setSubmitted] = useState(false);
   const [referenceId, setReferenceId] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -25,14 +27,47 @@ export default function MembershipForm() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setErrorMessage("");
+    setIsSubmitting(true);
 
-    // Generate a local reference number. No backend yet.
-    const generatedId = `RRI-2026-${Math.floor(1000 + Math.random() * 9000)}`;
-    setReferenceId(generatedId);
+    try {
+      const response = await fetch("/api/membership-applications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const result: unknown = await response.json();
 
-    setSubmitted(true);
+      if (
+        !response.ok ||
+        typeof result !== "object" ||
+        result === null ||
+        !("referenceNumber" in result) ||
+        typeof result.referenceNumber !== "string"
+      ) {
+        const message =
+          typeof result === "object" &&
+          result !== null &&
+          "error" in result &&
+          typeof result.error === "string"
+            ? result.error
+            : "We could not save your application. Please try again.";
+        throw new Error(message);
+      }
+
+      setReferenceId(result.referenceNumber);
+      setSubmitted(true);
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "We could not save your application. Please try again.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -63,10 +98,9 @@ export default function MembershipForm() {
             Membership access requires approval
           </p>
           <p className="mt-1 text-xs leading-5 text-green-700">
-            This form currently creates a reference number in this browser; it
-            does not submit an application or update your account. Member
-            resources are available only to accounts approved by an
-            administrator.
+            Your application has been saved for review. Submitting an
+            application does not create an account or grant member access.
+            Member resources require membership approval.
           </p>
         </div>
 
@@ -232,10 +266,20 @@ export default function MembershipForm() {
 
       <button
         type="submit"
-        className="w-full rounded-lg bg-[#0B1B3D] py-3 text-sm font-bold text-white transition hover:bg-[#122856]"
+        disabled={isSubmitting}
+        className="w-full rounded-lg bg-[#0B1B3D] py-3 text-sm font-bold text-white transition hover:bg-[#122856] disabled:cursor-not-allowed disabled:opacity-60"
       >
-        Submit Membership Interest
+        {isSubmitting ? "Submitting..." : "Submit Membership Interest"}
       </button>
+
+      {errorMessage && (
+        <p
+          role="alert"
+          className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700"
+        >
+          {errorMessage}
+        </p>
+      )}
 
       <p className="text-center text-xs leading-5 text-gray-500">
         By submitting, you agree to our{" "}

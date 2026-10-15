@@ -86,6 +86,18 @@ export default async function AdminPage() {
           </div>
 
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-[#0B1B3D]">
+              Applications
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-gray-600">
+              Review and manage membership applications.
+            </p>
+            <Link href="/admin/applications" className="mt-4 inline-flex font-medium text-[#1E824C] hover:underline">
+              Manage →
+            </Link>
+          </div>
+
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-[#0B1B3D]">Access</h2>
             <p className="mt-2 text-sm leading-6 text-gray-600">
               Review and manage administrative access.
