@@ -1,93 +1,104 @@
-import Link from "next/link";
-import { createAdminClient } from "@/lib/supabase/admin";
-import DeleteProductButton from "@/components/admin/DeleteProductButton";
 
-const typeBadgeStyles: Record<string, string> = {
-  free: "bg-green-100 text-green-800",
-  paid: "bg-blue-100 text-blue-800",
-  donation: "bg-purple-100 text-purple-800",
-};
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function AdminProductsPage() {
-  const supabase = await createAdminClient();
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) redirect("/login");
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (profile?.role !== "admin") redirect("/dashboard");
+
   const { data: products, error } = await supabase
     .from("products")
     .select("*")
     .order("created_at", { ascending: false });
 
-  if (error) throw new Error(`Unable to load products: ${error.message}`);
-
   return (
-    <main className="mx-auto max-w-6xl px-4 py-12">
-      <header className="mb-8 flex items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold text-[#0B1B3D]">Products</h1>
+    <main className="mx-auto w-full max-w-7xl p-6">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold">Products</h1>
+          <p className="mt-1 text-sm text-gray-600">
+            Manage products available on the website.
+          </p>
+        </div>
+
         <Link
           href="/admin/products/new"
-          className="rounded-md bg-[#F7B500] px-4 py-2 font-semibold text-[#0B1B3D] transition hover:bg-[#e5a700]"
+          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
         >
-          New Product
+          Add Product
         </Link>
-      </header>
+      </div>
 
-      {!products?.length ? (
-        <p className="rounded-lg border border-gray-200 bg-white px-6 py-10 text-center text-gray-600">
-          No products yet.
+      {error ? (
+        <p className="text-sm text-red-600">
+          Could not load products: {error.message}
         </p>
+      ) : !products?.length ? (
+        <div className="py-12">
+          <p className="text-gray-600">No products found.</p>
+          <Link
+            href="/admin/products/new"
+            className="mt-3 inline-block text-blue-600 hover:underline"
+          >
+            Add your first product
+          </Link>
+        </div>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
-          <table className="w-full min-w-200 text-left text-sm">
-            <thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-600">
-              <tr>
-                <th className="px-5 py-4">Title</th>
-                <th className="px-5 py-4">Type</th>
-                <th className="px-5 py-4">Media</th>
-                <th className="px-5 py-4">Price</th>
-                <th className="px-5 py-4">Created</th>
-                <th className="px-5 py-4">Actions</th>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr className="text-gray-600">
+                <th className="py-3 pr-4 font-medium">Product</th>
+                <th className="py-3 pr-4 font-medium">Status</th>
+                <th className="py-3 pr-4 font-medium">Created</th>
+                <th className="py-3 font-medium">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
-              {products.map((product) => {
-                const type = String(product.type ?? "").toLowerCase();
-                const media = product.media_type ?? product.media ?? "—";
-
-                return (
-                  <tr key={product.id} className="text-[#0B1B3D]">
-                    <td className="px-5 py-4 font-medium">{product.title}</td>
-                    <td className="px-5 py-4">
-                      <span
-                        className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${
-                          typeBadgeStyles[type] ?? "bg-gray-100 text-gray-700"
-                        }`}
-                      >
-                        {type || "—"}
-                      </span>
-                    </td>
-                    <td className="px-5 py-4 capitalize">{String(media)}</td>
-                    <td className="px-5 py-4">
-                      {product.price == null
-                        ? "—"
-                        : `$${Number(product.price).toFixed(2)}`}
-                    </td>
-                    <td className="px-5 py-4">
-                      {product.created_at
-                        ? new Date(product.created_at).toLocaleDateString()
-                        : "—"}
-                    </td>
-                    <td className="px-5 py-4">
-                      <div className="flex items-center gap-4">
-                        <Link
-                          href={`/admin/products/${product.id}/edit`}
-                          className="text-sm font-semibold text-[#1E824C] hover:underline"
-                        >
-                          Edit
-                        </Link>
-                        <DeleteProductButton productId={product.id} />
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+            <tbody>
+              {products.map((product) => (
+                <tr key={product.id} className="border-t border-gray-200">
+                  <td className="py-4 pr-4">
+                    <p className="font-medium text-gray-900">
+                      {product.title ?? product.name ?? "Untitled product"}
+                    </p>
+                    {product.description && (
+                      <p className="mt-1 max-w-md text-gray-500">
+                        {product.description}
+                      </p>
+                    )}
+                  </td>
+                  <td className="py-4 pr-4">
+                    {product.status ?? "Not set"}
+                  </td>
+                  <td className="py-4 pr-4 text-gray-600">
+                    {product.created_at
+                      ? new Date(product.created_at).toLocaleDateString()
+                      : "—"}
+                  </td>
+                  <td className="py-4">
+                    <Link
+                      href={`/admin/products/${product.id}/edit`}
+                      className="text-blue-600 hover:underline"
+                    >
+                      Edit
+                    </Link>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

@@ -3,17 +3,17 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function DeleteProductButton({
-  productId,
+export default function DeleteMemberButton({
+  memberId,
 }: {
-  productId: string;
+  memberId: string;
 }) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   async function handleDelete() {
-    if (!window.confirm("Delete this product?")) {
+    if (!window.confirm("Delete this member permanently?")) {
       return;
     }
 
@@ -21,7 +21,7 @@ export default function DeleteProductButton({
     setIsDeleting(true);
 
     try {
-      const response = await fetch(`/api/admin/products/${productId}`, {
+      const response = await fetch(`/api/admin/members/${memberId}`, {
         method: "DELETE",
       });
 
@@ -33,7 +33,7 @@ export default function DeleteProductButton({
           "error" in result &&
           typeof result.error === "string"
             ? result.error
-            : "Unable to delete this product.";
+            : "Unable to delete this member.";
         setErrorMessage(message);
         return;
       }
@@ -41,7 +41,9 @@ export default function DeleteProductButton({
       router.refresh();
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : "Unable to delete this product.",
+        error instanceof Error
+          ? error.message
+          : "Unable to delete this member.",
       );
     } finally {
       setIsDeleting(false);

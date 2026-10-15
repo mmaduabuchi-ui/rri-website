@@ -1,25 +1,43 @@
-import { redirect } from "next/navigation";
+
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { requireApprovedMember } from "@/lib/auth/approved-member";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function DashboardPage() {
+  const { user, isAdmin } = await requireApprovedMember();
   const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    redirect("/login");
-  }
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role")
+    .select("name, membership_status")
     .eq("id", user.id)
     .maybeSingle();
 
-  const isAdmin = profile?.role === "admin";
+  if (!profile) redirect("/login");
+
+  const links = [
+    {
+      title: "Knowledge Centre",
+      description: "Explore articles, books, publications, and resources.",
+      href: "/knowledge-centre",
+    },
+    {
+      title: "Humanity & Welfare",
+      description: "Explore the initiative's welfare programmes.",
+      href: "/welfare",
+    },
+    {
+      title: "Global Presence",
+      description: "Learn about the initiative's global structure.",
+      href: "/global-presence",
+    },
+    {
+      title: "Contact",
+      description: "Contact the initiative for support or enquiries.",
+      href: "/contact",
+    },
+  ];
 
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
@@ -30,73 +48,94 @@ export default async function DashboardPage() {
           </p>
 
           <h1 className="mt-2 text-3xl font-bold text-[#0B1B3D] sm:text-4xl">
-            Welcome to your dashboard
+            Welcome{profile.name ? `, ${profile.name}` : ""}
           </h1>
 
           <p className="mt-3 text-gray-600">
-            Manage your account and access your available resources.
+            Your account and resources in one place.
           </p>
         </header>
 
-        <section className="rounded-2xl border border-gray-200 border-t-4 border-t-[#1E824C] bg-white p-6 shadow-sm sm:p-8">
+        <section className="bg-white p-6 sm:p-8">
           <h2 className="text-xl font-semibold text-[#0B1B3D]">
             Account overview
           </h2>
 
-          <div className="mt-5 space-y-4">
+          <div className="mt-5 grid gap-6 sm:grid-cols-3">
             <div>
               <p className="text-sm text-gray-500">Email address</p>
               <p className="mt-1 break-all font-medium text-gray-900">
-                {user.email}
+                {user.email ?? "Not available"}
               </p>
             </div>
 
             <div>
               <p className="text-sm text-gray-500">Account role</p>
-              <span className="mt-1 inline-flex rounded-full bg-green-100 px-3 py-1 text-sm font-medium capitalize text-green-800">
+              <p className="mt-1 font-medium capitalize text-gray-900">
                 {isAdmin ? "Administrator" : "Member"}
-              </span>
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-8 grid gap-6 sm:grid-cols-2">
-          {isAdmin && (
-            <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-[#0B1B3D]">
-                Administration
-              </h2>
-
-              <p className="mt-2 text-sm leading-6 text-gray-600">
-                Access administrative tools for managing the initiative.
               </p>
-
-              <Link
-                href="/admin"
-                className="mt-5 inline-flex rounded-lg bg-[#1E824C] px-5 py-3 font-medium text-white transition hover:bg-green-800"
-              >
-                Open admin area
-              </Link>
             </div>
-          )}
 
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-[#0B1B3D]">
-              Public website
-            </h2>
-
-            <p className="mt-2 text-sm leading-6 text-gray-600">
-              Return to the main website to explore the initiative.
-            </p>
-
-            <Link
-              href="/"
-              className="mt-5 inline-flex rounded-lg border border-gray-300 px-5 py-3 font-medium text-[#0B1B3D] transition hover:bg-gray-50"
-            >
-              Visit homepage
-            </Link>
+            <div>
+              <p className="text-sm text-gray-500">Membership status</p>
+              <p className="mt-1 font-medium capitalize text-green-700">
+                {profile.membership_status ?? "Approved"}
+              </p>
+            </div>
           </div>
         </section>
+
+        {isAdmin && (
+          <section className="mt-8 bg-white p-6">
+            <h2 className="text-lg font-semibold text-[#0B1B3D]">
+              Administration
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              Manage members, products, articles, and website administration.
+            </p>
+            <Link
+              href="/admin"
+              className="mt-4 inline-flex bg-[#1E824C] px-5 py-3 font-medium text-white hover:bg-green-800"
+            >
+              Open admin area
+            </Link>
+          </section>
+        )}
+
+        <section className="mt-8">
+          <h2 className="mb-5 text-xl font-semibold text-[#0B1B3D]">
+            Explore RRI
+          </h2>
+
+          <div className="grid gap-5 sm:grid-cols-2">
+            {links.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="bg-white p-6 transition hover:bg-gray-100"
+              >
+                <h3 className="font-semibold text-[#0B1B3D]">
+                  {item.title}
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-gray-600">
+                  {item.description}
+                </p>
+                <span className="mt-4 inline-block text-sm font-medium text-[#1E824C]">
+                  Explore →
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <div className="mt-8">
+          <Link
+            href="/"
+            className="text-sm font-medium text-[#0B1B3D] hover:underline"
+          >
+            ← Return to homepage
+          </Link>
+        </div>
       </div>
     </main>
   );

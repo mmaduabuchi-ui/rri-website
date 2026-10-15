@@ -3,8 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 
-const ACCESS_KEY = "rri_knowledge_access";
-
 export default function MembershipForm() {
   const [formData, setFormData] = useState({
     fullName: "",
@@ -34,13 +32,6 @@ export default function MembershipForm() {
     const generatedId = `RRI-2026-${Math.floor(1000 + Math.random() * 9000)}`;
     setReferenceId(generatedId);
 
-    // Unlock Knowledge Centre access on this device.
-    try {
-      localStorage.setItem(ACCESS_KEY, "true");
-    } catch {
-      // localStorage may be unavailable (private mode, etc.) — fail silently
-    }
-
     setSubmitted(true);
   };
 
@@ -69,11 +60,13 @@ export default function MembershipForm() {
 
         <div className="mt-8 rounded-xl border border-green-100 bg-green-50 p-5">
           <p className="text-sm font-semibold text-green-800">
-            🎉 Knowledge Centre unlocked
+            Membership access requires approval
           </p>
           <p className="mt-1 text-xs leading-5 text-green-700">
-            You now have access to our library of books, guides, workbooks, and
-            daily articles on this device.
+            This form currently creates a reference number in this browser; it
+            does not submit an application or update your account. Member
+            resources are available only to accounts approved by an
+            administrator.
           </p>
         </div>
 
@@ -82,7 +75,7 @@ export default function MembershipForm() {
             href="/knowledge-centre"
             className="inline-flex items-center justify-center rounded-lg bg-[#F7B500] px-6 py-3 text-sm font-bold text-[#0B1B3D] transition hover:bg-[#dca200]"
           >
-            Enter Knowledge Centre
+            View Knowledge Centre
           </Link>
 
           <Link

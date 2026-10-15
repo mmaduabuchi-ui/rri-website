@@ -1,48 +1,29 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { redirect } from "next/navigation";
 import PageHero from "@/components/pages/PageHero";
 import Container from "@/components/ui/Container";
 import LibraryGrid from "@/components/knowledge/LibraryGrid";
 import ArticlesList from "@/components/knowledge/ArticlesList";
+import { createClient } from "@/lib/supabase/server";
 
-const ACCESS_KEY = "rri_knowledge_access";
+export default async function KnowledgeCentrePage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
 
-export default function KnowledgeCentrePage() {
-  const [hasAccess, setHasAccess] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    try {
-      setHasAccess(localStorage.getItem(ACCESS_KEY) === "true");
-    } catch {
-      setHasAccess(false);
-    }
-  }, []);
-
-  // Don't render until we've checked localStorage (avoids hydration flash)
-  if (!mounted) {
-    return (
-      <main>
-        <PageHero
-          eyebrow="Knowledge Centre"
-          title="Loading..."
-          description="Please wait while we check your access."
-        />
-      </main>
-    );
+  if (authError) {
+    throw new Error(`Unable to verify your session: ${authError.message}`);
   }
 
-  // Gated: not yet a member
-  if (!hasAccess) {
+  if (!user) {
     return (
       <main>
         <PageHero
           eyebrow="Knowledge Centre"
           title="Members-only resources."
-          description="Join RRI to unlock our full library of books, guides, workbooks, and daily articles."
+          description="Sign in with an approved RRI member account to access our library of books, guides, workbooks, and daily articles."
         />
 
         <section className="bg-[#F5F7FA] py-20 sm:py-24">
@@ -63,15 +44,23 @@ export default function KnowledgeCentrePage() {
               </p>
 
               <p className="mt-3 leading-7 text-gray-600">
-                Access unlocks immediately after you submit the Join RRI form.
+                Access is available after an administrator approves your
+                membership.
               </p>
 
               <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
                 <Link
-                  href="/get-involved"
+                  href="/login"
                   className="inline-flex min-h-12 items-center justify-center rounded-lg bg-[#F7B500] px-7 py-3.5 font-bold text-[#0B1B3D] transition-colors hover:bg-[#dca200] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F7B500] focus-visible:ring-offset-2"
                 >
-                  Join RRI to Access
+                  Sign in
+                </Link>
+
+                <Link
+                  href="/register"
+                  className="inline-flex min-h-12 items-center justify-center rounded-lg border-2 border-[#1E824C] px-7 py-3.5 font-semibold text-[#1E824C] transition-colors hover:bg-[#1E824C] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1E824C] focus-visible:ring-offset-2"
+                >
+                  Create an account
                 </Link>
 
                 <Link
@@ -88,7 +77,23 @@ export default function KnowledgeCentrePage() {
     );
   }
 
-  // Unlocked: show books + articles
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("role, membership_status")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (profileError) {
+    throw new Error(`Unable to verify membership: ${profileError.message}`);
+  }
+
+  if (
+    profile?.role !== "admin" &&
+    profile?.membership_status !== "approved"
+  ) {
+    redirect("/membership-pending");
+  }
+
   return (
     <main>
       <PageHero
@@ -159,8 +164,8 @@ export default function KnowledgeCentrePage() {
       <section className="bg-white py-12">
         <Container>
           <p className="mx-auto max-w-2xl text-center text-xs leading-6 text-gray-500">
-            Knowledge Centre access is tied to this device. To unlock access on
-            another device, submit the Join RRI form again.
+            Knowledge Centre access is available to signed-in members whose
+            membership has been approved.
           </p>
         </Container>
       </section>
