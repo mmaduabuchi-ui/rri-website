@@ -1,91 +1,100 @@
-
-import Link from "next/link";
+// src/app/admin/access/page.tsx
 import { redirect } from "next/navigation";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import AccessManager from "@/components/admin/AccessManager";
 
 export default async function AdminAccessPage() {
-  const supabase = await createClient();
-
+  const authClient = await createClient();
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+    error: authError,
+  } = await authClient.auth.getUser();
 
-  if (!user) redirect("/login");
+  if (authError) {
+    throw new Error(`Unable to verify your session: ${authError.message}`);
+  }
+  if (!user) {
+    redirect("/login");
+  }
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await authClient
     .from("profiles")
     .select("role")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
-  if (profile?.role !== "admin") redirect("/dashboard");
+  if (profileError) {
+    throw new Error(
+      `Unable to verify administrator access: ${profileError.message}`,
+    );
+  }
+  if (profile?.role !== "admin") {
+    redirect("/dashboard");
+  }
 
-  const { data: profiles, error } = await supabase
-    .from("profiles")
-    .select("id, role, membership_status");
+  const admin = createAdminClient();
 
-  const admins =
-    profiles?.filter((item) => item.role === "admin").length ?? 0;
-  const members =
-    profiles?.filter((item) => item.role === "member").length ?? 0;
-  const pending =
-    profiles?.filter((item) => item.membership_status === "pending").length ??
-    0;
+  const [membersRes, productsRes, grantsRes] = await Promise.all([
+    admin
+      .from("profiles")
+      .select("id, email, name")
+      .order("email", { ascending: true }),
+    admin
+      .from("products")
+      .select("id, title, type")
+      .order("created_at", { ascending: false }),
+    admin
+      .from("product_access")
+      .select("id, user_id, product_id, granted_at")
+      .order("granted_at", { ascending: false }),
+  ]);
+
+  if (grantsRes.error) {
+    throw new Error(
+      `Unable to load access grants: ${grantsRes.error.message}`,
+    );
+  }
+
+  const members = membersRes.data ?? [];
+  const products = productsRes.data ?? [];
+  const rawGrants = grantsRes.data ?? [];
+
+  const memberMap = new Map(members.map((m) => [m.id, m]));
+  const productMap = new Map(products.map((p) => [p.id, p]));
+
+  const grants = rawGrants.map((g) => {
+    const member = memberMap.get(g.user_id);
+    const product = productMap.get(g.product_id);
+    return {
+      id: g.id,
+      user_id: g.user_id,
+      product_id: g.product_id,
+      created_at: g.granted_at,
+      member_email: member?.email ?? null,
+      member_name: member?.name ?? null,
+      product_title: product?.title ?? "(deleted product)",
+    };
+  });
 
   return (
-    <main className="mx-auto w-full max-w-6xl p-6">
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-[#0B1B3D]">
-          Access Management
-        </h1>
-        <p className="mt-2 text-gray-600">
-          Review administrator roles and member access status.
-        </p>
+    <main className="min-h-screen bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl">
+        <header className="mb-8">
+          <h1 className="text-3xl font-bold tracking-tight text-[#0B1B3D] sm:text-4xl">
+            Access Management
+          </h1>
+          <p className="mt-3 text-gray-600">
+            Grant or revoke member access to products.
+          </p>
+        </header>
+
+        <AccessManager
+          members={members}
+          products={products}
+          grants={grants}
+        />
       </div>
-
-      {error ? (
-        <p className="text-sm text-red-600">
-          Could not load access information: {error.message}
-        </p>
-      ) : (
-        <>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-lg bg-gray-50 p-5">
-              <p className="text-sm text-gray-600">Total Accounts</p>
-              <p className="mt-2 text-3xl font-semibold">
-                {profiles?.length ?? 0}
-              </p>
-            </div>
-
-            <div className="rounded-lg bg-gray-50 p-5">
-              <p className="text-sm text-gray-600">Administrators</p>
-              <p className="mt-2 text-3xl font-semibold">{admins}</p>
-            </div>
-
-            <div className="rounded-lg bg-gray-50 p-5">
-              <p className="text-sm text-gray-600">Pending Members</p>
-              <p className="mt-2 text-3xl font-semibold">{pending}</p>
-            </div>
-          </div>
-
-          <section className="mt-8">
-            <h2 className="text-lg font-semibold text-[#0B1B3D]">
-              Account Access
-            </h2>
-
-            <p className="mt-2 text-sm text-gray-600">
-              {members} member accounts currently have the member role.
-            </p>
-
-            <Link
-              href="/admin/members"
-              className="mt-5 inline-flex rounded-md bg-[#0B1B3D] px-4 py-2 text-sm font-medium text-white hover:bg-[#152b55]"
-            >
-              Manage Members
-            </Link>
-          </section>
-        </>
-      )}
     </main>
   );
 }
