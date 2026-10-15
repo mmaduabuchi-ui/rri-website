@@ -1,3 +1,4 @@
+// src/app/admin/page.tsx
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
@@ -60,7 +61,10 @@ export default async function AdminPage() {
             <p className="mt-2 text-sm leading-6 text-gray-600">
               Create and update articles and website content.
             </p>
-            <Link href="/admin/articles" className="mt-4 inline-flex font-medium text-[#1E824C] hover:underline">
+            <Link
+              href="/admin/articles"
+              className="mt-4 inline-flex font-medium text-[#1E824C] hover:underline"
+            >
               Manage →
             </Link>
           </div>
@@ -70,7 +74,10 @@ export default async function AdminPage() {
             <p className="mt-2 text-sm leading-6 text-gray-600">
               Manage the products available through the initiative.
             </p>
-            <Link href="/admin/products" className="mt-4 inline-flex font-medium text-[#1E824C] hover:underline">
+            <Link
+              href="/admin/products"
+              className="mt-4 inline-flex font-medium text-[#1E824C] hover:underline"
+            >
               Manage →
             </Link>
           </div>
@@ -80,7 +87,10 @@ export default async function AdminPage() {
             <p className="mt-2 text-sm leading-6 text-gray-600">
               View and manage registered initiative members.
             </p>
-            <Link href="/admin/members" className="mt-4 inline-flex font-medium text-[#1E824C] hover:underline">
+            <Link
+              href="/admin/members"
+              className="mt-4 inline-flex font-medium text-[#1E824C] hover:underline"
+            >
               Manage →
             </Link>
           </div>
@@ -92,7 +102,10 @@ export default async function AdminPage() {
             <p className="mt-2 text-sm leading-6 text-gray-600">
               Review and manage membership applications.
             </p>
-            <Link href="/admin/applications" className="mt-4 inline-flex font-medium text-[#1E824C] hover:underline">
+            <Link
+              href="/admin/applications"
+              className="mt-4 inline-flex font-medium text-[#1E824C] hover:underline"
+            >
               Manage →
             </Link>
           </div>
@@ -102,8 +115,26 @@ export default async function AdminPage() {
             <p className="mt-2 text-sm leading-6 text-gray-600">
               Review and manage administrative access.
             </p>
-            <Link href="/admin/access" className="mt-4 inline-flex font-medium text-[#1E824C] hover:underline">
+            <Link
+              href="/admin/access"
+              className="mt-4 inline-flex font-medium text-[#1E824C] hover:underline"
+            >
               Manage →
+            </Link>
+          </div>
+
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-[#0B1B3D]">
+              Member Chat
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-gray-600">
+              Read and moderate the member chat. Admins can delete any message.
+            </p>
+            <Link
+              href="/dashboard/chat"
+              className="mt-4 inline-flex font-medium text-[#1E824C] hover:underline"
+            >
+              Open chat →
             </Link>
           </div>
 
@@ -112,7 +143,10 @@ export default async function AdminPage() {
             <p className="mt-2 text-sm leading-6 text-gray-600">
               Configure administrative and website preferences.
             </p>
-            <Link href="/admin/settings" className="mt-4 inline-flex font-medium text-[#1E824C] hover:underline">
+            <Link
+              href="/admin/settings"
+              className="mt-4 inline-flex font-medium text-[#1E824C] hover:underline"
+            >
               Manage →
             </Link>
           </div>
