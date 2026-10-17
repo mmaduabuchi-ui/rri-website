@@ -1,7 +1,9 @@
+// src/app/api/admin/articles/route.ts
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 const allowedKinds = ["article", "news", "announcement", "emergency"] as const;
+const allowedMediaTypes = ["none", "image", "video", "audio", "link"] as const;
 
 type ArticleInput = {
   title: string;
@@ -10,6 +12,9 @@ type ArticleInput = {
   kind: (typeof allowedKinds)[number];
   category: string;
   cover_url: string;
+  media_type: (typeof allowedMediaTypes)[number];
+  media_url: string;
+  media_caption: string;
   published: boolean;
 };
 
@@ -22,7 +27,18 @@ function parseArticleInput(value: unknown): ArticleInput | null {
     return null;
   }
 
-  const { title, excerpt, body, kind, category, cover_url, published } = value;
+  const {
+    title,
+    excerpt,
+    body,
+    kind,
+    category,
+    cover_url,
+    media_type,
+    media_url,
+    media_caption,
+    published,
+  } = value;
 
   if (
     typeof title !== "string" ||
@@ -34,7 +50,11 @@ function parseArticleInput(value: unknown): ArticleInput | null {
     typeof cover_url !== "string" ||
     typeof published !== "boolean" ||
     typeof kind !== "string" ||
-    !allowedKinds.includes(kind as ArticleInput["kind"])
+    !allowedKinds.includes(kind as ArticleInput["kind"]) ||
+    typeof media_type !== "string" ||
+    !allowedMediaTypes.includes(media_type as ArticleInput["media_type"]) ||
+    typeof media_url !== "string" ||
+    typeof media_caption !== "string"
   ) {
     return null;
   }
@@ -46,6 +66,9 @@ function parseArticleInput(value: unknown): ArticleInput | null {
     kind: kind as ArticleInput["kind"],
     category,
     cover_url,
+    media_type: media_type as ArticleInput["media_type"],
+    media_url,
+    media_caption,
     published,
   };
 }
@@ -113,6 +136,9 @@ export async function POST(request: Request) {
       kind: article.kind,
       category: article.category,
       cover_url: article.cover_url,
+      media_type: article.media_type,
+      media_url: article.media_url || null,
+      media_caption: article.media_caption || null,
       status: article.published ? "published" : "draft",
     })
     .select()

@@ -1,7 +1,9 @@
+// src/app/api/admin/articles/[id]/route.ts
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 const allowedKinds = ["article", "news", "announcement", "emergency"] as const;
+const allowedMediaTypes = ["none", "image", "video", "audio", "link"] as const;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -40,21 +42,39 @@ export async function PATCH(
     );
   }
   if (profile?.role !== "admin") {
-    return Response.json({ error: "Administrator access required." }, { status: 400 });
+    return Response.json(
+      { error: "Administrator access required." },
+      { status: 400 },
+    );
   }
 
   let payload: unknown;
   try {
     payload = await request.json();
   } catch {
-    return Response.json({ error: "Request body must be valid JSON." }, { status: 400 });
+    return Response.json(
+      { error: "Request body must be valid JSON." },
+      { status: 400 },
+    );
   }
 
   if (!isRecord(payload)) {
     return Response.json({ error: "Invalid article data." }, { status: 400 });
   }
 
-  const { title, excerpt, body, kind, category, cover_url, published } = payload;
+  const {
+    title,
+    excerpt,
+    body,
+    kind,
+    category,
+    cover_url,
+    media_type,
+    media_url,
+    media_caption,
+    published,
+  } = payload;
+
   if (
     typeof title !== "string" ||
     !title.trim() ||
@@ -65,6 +85,12 @@ export async function PATCH(
     !allowedKinds.includes(kind as (typeof allowedKinds)[number]) ||
     typeof category !== "string" ||
     typeof cover_url !== "string" ||
+    typeof media_type !== "string" ||
+    !allowedMediaTypes.includes(
+      media_type as (typeof allowedMediaTypes)[number],
+    ) ||
+    typeof media_url !== "string" ||
+    typeof media_caption !== "string" ||
     typeof published !== "boolean"
   ) {
     return Response.json(
@@ -83,6 +109,9 @@ export async function PATCH(
       kind,
       category,
       cover_url,
+      media_type,
+      media_url: media_url || null,
+      media_caption: media_caption || null,
       status: published ? "published" : "draft",
     })
     .eq("id", id)
@@ -132,7 +161,10 @@ export async function DELETE(
     );
   }
   if (profile?.role !== "admin") {
-    return Response.json({ error: "Administrator access required." }, { status: 400 });
+    return Response.json(
+      { error: "Administrator access required." },
+      { status: 400 },
+    );
   }
 
   const { id } = await params;

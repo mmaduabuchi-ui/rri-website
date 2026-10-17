@@ -3,6 +3,9 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import ArticleMediaField, {
+  type MediaValue,
+} from "@/components/admin/ArticleMediaField";
 
 type ArticleKind = "article" | "news" | "announcement" | "emergency";
 
@@ -14,6 +17,11 @@ export default function NewArticlePage() {
   const [kind, setKind] = useState<ArticleKind>("article");
   const [category, setCategory] = useState("");
   const [coverUrl, setCoverUrl] = useState("");
+  const [media, setMedia] = useState<MediaValue>({
+    media_type: "none",
+    media_url: "",
+    media_caption: "",
+  });
   const [published, setPublished] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,6 +42,9 @@ export default function NewArticlePage() {
           kind,
           category,
           cover_url: coverUrl,
+          media_type: media.media_type,
+          media_url: media.media_url,
+          media_caption: media.media_caption,
           published,
         }),
       });
@@ -178,6 +189,8 @@ export default function NewArticlePage() {
               className={inputClassName}
             />
           </div>
+
+          <ArticleMediaField value={media} onChange={setMedia} />
 
           <label className="flex items-center gap-3 text-sm font-medium text-gray-700">
             <input

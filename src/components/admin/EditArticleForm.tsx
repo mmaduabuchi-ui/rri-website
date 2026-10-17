@@ -3,6 +3,9 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import ArticleMediaField, {
+  type MediaValue,
+} from "@/components/admin/ArticleMediaField";
 
 type ArticleKind = "article" | "news" | "announcement" | "emergency";
 
@@ -14,6 +17,9 @@ export type EditableArticle = {
   kind: ArticleKind;
   category: string | null;
   cover_url: string | null;
+  media_type: string | null;
+  media_url: string | null;
+  media_caption: string | null;
   status: string;
 };
 
@@ -29,6 +35,12 @@ export default function EditArticleForm({
   const [kind, setKind] = useState<ArticleKind>(article.kind);
   const [category, setCategory] = useState(article.category ?? "");
   const [coverUrl, setCoverUrl] = useState(article.cover_url ?? "");
+  const [media, setMedia] = useState<MediaValue>({
+    media_type:
+      (article.media_type as MediaValue["media_type"]) ?? "none",
+    media_url: article.media_url ?? "",
+    media_caption: article.media_caption ?? "",
+  });
   const [published, setPublished] = useState(article.status === "published");
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,6 +62,9 @@ export default function EditArticleForm({
           kind,
           category,
           cover_url: coverUrl,
+          media_type: media.media_type,
+          media_url: media.media_url,
+          media_caption: media.media_caption,
           published,
         }),
       });
@@ -230,6 +245,8 @@ export default function EditArticleForm({
             />
           </div>
 
+          <ArticleMediaField value={media} onChange={setMedia} />
+
           <label className="flex items-center gap-3 text-sm font-medium text-gray-700">
             <input
               type="checkbox"
@@ -250,21 +267,23 @@ export default function EditArticleForm({
             </p>
           )}
 
-          <button
-            type="submit"
-            disabled={isSubmitting || isDeleting}
-            className="inline-flex min-h-12 items-center justify-center rounded-lg bg-[#F7B500] px-6 py-3 font-bold text-[#0B1B3D] transition hover:bg-[#dca200] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B1B3D] disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {isSubmitting ? "Saving..." : "Save changes"}
-          </button>
-          <button
-            type="button"
-            onClick={handleDelete}
-            disabled={isSubmitting || isDeleting}
-            className="ml-3 inline-flex min-h-12 items-center justify-center rounded-lg border border-red-300 px-6 py-3 font-bold text-red-700 transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {isDeleting ? "Deleting..." : "Delete"}
-          </button>
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="submit"
+              disabled={isSubmitting || isDeleting}
+              className="inline-flex min-h-12 items-center justify-center rounded-lg bg-[#F7B500] px-6 py-3 font-bold text-[#0B1B3D] transition hover:bg-[#dca200] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B1B3D] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isSubmitting ? "Saving..." : "Save changes"}
+            </button>
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={isSubmitting || isDeleting}
+              className="inline-flex min-h-12 items-center justify-center rounded-lg border border-red-300 px-6 py-3 font-bold text-red-700 transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </button>
+          </div>
         </form>
       </div>
     </main>
