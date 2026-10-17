@@ -1,3 +1,4 @@
+// src/app/admin/articles/[id]/edit/page.tsx
 import { notFound, redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -41,7 +42,9 @@ export default async function EditArticlePage({
 
   const { data: article, error: articleError } = await createAdminClient()
     .from("articles")
-    .select("id, title, excerpt, body, kind, category, cover_url, status")
+    .select(
+      "id, title, excerpt, body, kind, category, cover_url, media_type, media_url, media_caption, status",
+    )
     .eq("id", id)
     .maybeSingle();
 
