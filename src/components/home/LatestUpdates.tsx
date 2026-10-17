@@ -31,7 +31,7 @@ export default async function LatestUpdates() {
           </div>
 
           <Link
-            href="/knowledge-centre"
+            href="/insights"
             className="inline-flex w-fit items-center font-semibold text-[#1E824C] hover:underline"
           >
             View all updates <span className="ml-2">→</span>
@@ -79,7 +79,7 @@ export default async function LatestUpdates() {
                 </p>
 
                 <Link
-                  href={`/knowledge-centre/articles/${article.id}`}
+                  href={`/insights/${article.id}`}
                   className="mt-5 inline-flex items-center font-semibold text-[#1E824C] hover:underline"
                 >
                   Read more <span className="ml-2">→</span>
