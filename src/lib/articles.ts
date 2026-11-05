@@ -9,6 +9,8 @@ export type Article = {
   kind: string | null;
   category: string | null;
   cover_url: string | null;
+  media_url: string | null;
+  media_type: string | null;
   created_at: string;
 };
 
@@ -17,7 +19,8 @@ export async function getArticles(limit?: number): Promise<Article[]> {
 
   let query = supabase
     .from("articles")
-    .select("id, title, excerpt, body, kind, category, cover_url, created_at")
+    // 1. Added media_url and media_type to the select query
+    .select("id, title, excerpt, body, kind, category, cover_url, media_url, media_type, created_at")
     .eq("status", "published")
     .order("created_at", { ascending: false });
 

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 
 type PageProps = {
@@ -130,6 +131,42 @@ function ArticleMedia({
   );
 }
 
+// 1. Generate Dynamic SEO Metadata (OpenGraph/Twitter)
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params;
+  const supabase = await createClient();
+  const { data: article } = await supabase
+    .from("articles")
+    .select("title, excerpt, cover_url, media_url, media_type")
+    .eq("id", id)
+    .eq("status", "published")
+    .maybeSingle();
+
+  if (!article) return { title: "Article Not Found" };
+
+  const displayImage =
+    article.cover_url ||
+    (article.media_type === "image" ? article.media_url : null);
+
+  return {
+    title: article.title,
+    description:
+      article.excerpt || "Read this article on Realise Reality Initiative.",
+    openGraph: {
+      title: article.title,
+      description: article.excerpt || "",
+      type: "article",
+      images: displayImage ? [{ url: displayImage }] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description: article.excerpt || "",
+      images: displayImage ? [displayImage] : [],
+    },
+  };
+}
+
 export default async function InsightPage({ params }: PageProps) {
   const { id } = await params;
   const supabase = await createClient();
@@ -153,8 +190,45 @@ export default async function InsightPage({ params }: PageProps) {
       }).format(new Date(date))
     : null;
 
+  // Use cover_url, fallback to media_url if it's an image
+  const displayImage =
+    article.cover_url ||
+    (article.media_type === "image" ? article.media_url : null);
+
+  // 2. Article JSON-LD Schema for Google
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    image: displayImage ? [displayImage] : [],
+    datePublished: date
+      ? new Date(date).toISOString()
+      : new Date().toISOString(),
+    dateModified: new Date(article.created_at).toISOString(),
+    author: {
+      "@type": "Organization",
+      name: "Realise Reality Initiative",
+      url: "https://www.realise-reality.org",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Realise Reality Initiative",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://www.realise-reality.org/images/logo.png", // Update if logo path is different
+      },
+    },
+    description: article.excerpt || "",
+  };
+
   return (
     <main className="min-h-screen bg-white px-6 py-12 text-[#0B1B3D] sm:py-16">
+      {/* Inject JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       <article className="mx-auto max-w-3xl">
         <Link
           href="/insights"
@@ -166,23 +240,25 @@ export default async function InsightPage({ params }: PageProps) {
           Back to Insights
         </Link>
 
-        {/* Cover image — TOP */}
-        {article.cover_url && (
+        {/* Cover image or Fallback Media Image — TOP */}
+        {displayImage && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={article.cover_url}
+            src={displayImage}
             alt={`Cover image for ${article.title}`}
             loading="eager"
             className="mt-8 max-h-128 w-full rounded-2xl object-cover"
           />
         )}
 
-        {/* Attached media (image / video / audio / link) — also at TOP, right after cover */}
-        <ArticleMedia
-          type={article.media_type ?? "none"}
-          url={article.media_url ?? null}
-          caption={article.media_caption ?? null}
-        />
+        {/* Other media types (video/audio/link) — also at TOP, but only if it's not the image we already showed */}
+        {!displayImage || article.media_type !== "image" ? (
+          <ArticleMedia
+            type={article.media_type ?? "none"}
+            url={article.media_url ?? null}
+            caption={article.media_caption ?? null}
+          />
+        ) : null}
 
         {/* Header now comes after the images/media */}
         <header className="mt-8">
