@@ -19,7 +19,8 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "Insights & Resources | Realise Reality Initiative",
-    description: "Explore ideas, perspectives, and resources from Realise Reality Initiative on critical thinking, personal growth, reality, and conscious living.",
+    description:
+      "Explore ideas, perspectives, and resources from Realise Reality Initiative on critical thinking, personal growth, reality, and conscious living.",
     url: "https://www.realise-reality.org/insights",
     siteName: "Realise Reality Initiative",
     locale: "en_US",
@@ -28,7 +29,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Insights & Resources | Realise Reality Initiative",
-    description: "Explore ideas, perspectives, and resources from Realise Reality Initiative on critical thinking, personal growth, reality, and conscious living.",
+    description:
+      "Explore ideas, perspectives, and resources from Realise Reality Initiative on critical thinking, personal growth, reality, and conscious living.",
   },
   alternates: {
     canonical: "https://www.realise-reality.org/insights",
@@ -79,7 +81,7 @@ export default async function InsightsPage() {
       />
 
       {/* Introduction */}
-      <section 
+      <section
         className="bg-white py-20 sm:py-24 lg:py-28"
         aria-labelledby="intro-heading"
       >
@@ -89,7 +91,7 @@ export default async function InsightsPage() {
               Knowledge & Perspectives
             </p>
 
-            <h2 
+            <h2
               id="intro-heading"
               className="mt-3 text-3xl font-bold text-[#0B1B3D] sm:text-4xl"
             >
@@ -106,7 +108,7 @@ export default async function InsightsPage() {
       </section>
 
       {/* Topics */}
-      <section 
+      <section
         className="bg-[#F5F7FA] py-20 sm:py-24 lg:py-28"
         aria-labelledby="topics-heading"
       >
@@ -114,7 +116,7 @@ export default async function InsightsPage() {
           <h2 id="topics-heading" className="sr-only">
             Topics and Resources
           </h2>
-          
+
           <div className="grid gap-6 sm:grid-cols-2">
             {topics.map((topic) => (
               <article
@@ -122,14 +124,14 @@ export default async function InsightsPage() {
                 className="group rounded-2xl border border-gray-200 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg focus-within:ring-2 focus-within:ring-[#1E824C] focus-within:ring-offset-2 sm:p-10"
                 aria-labelledby={`topic-${topic.number}-heading`}
               >
-                <div 
+                <div
                   className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0B1B3D] text-sm font-bold text-[#F7B500] transition-colors duration-300 group-hover:bg-[#1E824C]"
                   aria-hidden="true"
                 >
                   {topic.number}
                 </div>
 
-                <h2 
+                <h2
                   id={`topic-${topic.number}-heading`}
                   className="mt-6 text-2xl font-bold text-[#0B1B3D]"
                 >
@@ -143,8 +145,18 @@ export default async function InsightsPage() {
                 <div className="mt-6">
                   <span className="inline-flex items-center gap-2 text-sm font-semibold text-[#1E824C] transition group-hover:gap-3">
                     Explore {topic.title.toLowerCase()}
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    <svg
+                      className="h-4 w-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
                     </svg>
                   </span>
                 </div>
@@ -160,16 +172,25 @@ export default async function InsightsPage() {
         aria-labelledby="articles-heading"
       >
         <Container>
-          <div className="mb-10">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#1E824C]">
-              Read & Explore
-            </p>
-            <h2
-              id="articles-heading"
-              className="mt-3 text-3xl font-bold text-[#0B1B3D] sm:text-4xl"
+          <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#1E824C]">
+                Read & Explore
+              </p>
+              <h2
+                id="articles-heading"
+                className="mt-3 text-3xl font-bold text-[#0B1B3D] sm:text-4xl"
+              >
+                Latest Articles
+              </h2>
+            </div>
+
+            <Link
+              href="/articles"
+              className="inline-flex items-center font-semibold text-[#1E824C] hover:underline"
             >
-              Latest Articles
-            </h2>
+              View all articles <span className="ml-2">→</span>
+            </Link>
           </div>
 
           {articles?.length ? (
@@ -209,7 +230,7 @@ export default async function InsightsPage() {
       </section>
 
       {/* Future Resources */}
-      <section 
+      <section
         className="bg-white py-20 sm:py-24 lg:py-28"
         aria-labelledby="future-heading"
       >
@@ -219,7 +240,7 @@ export default async function InsightsPage() {
               Coming Soon
             </p>
 
-            <h2 
+            <h2
               id="future-heading"
               className="mt-4 text-3xl font-bold text-white sm:text-4xl"
             >
@@ -251,7 +272,7 @@ export default async function InsightsPage() {
       </section>
 
       {/* CTA Section */}
-      <section 
+      <section
         className="bg-[#F5F7FA] py-20 sm:py-24"
         aria-labelledby="cta-heading"
       >
@@ -261,7 +282,7 @@ export default async function InsightsPage() {
               Join the Conversation
             </p>
 
-            <h2 
+            <h2
               id="cta-heading"
               className="mt-3 text-3xl font-bold text-[#0B1B3D] sm:text-4xl"
             >
@@ -269,7 +290,7 @@ export default async function InsightsPage() {
             </h2>
 
             <p className="mt-6 text-base leading-8 text-gray-600 sm:text-lg">
-              Have an idea, perspective, or resource to share? We'd love to
+              Have an idea, perspective, or resource to share? We&apos;d love to
               hear from you and collaborate on building a community of clear
               thinkers and intentional living.
             </p>

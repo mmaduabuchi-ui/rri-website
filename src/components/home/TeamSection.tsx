@@ -76,7 +76,7 @@ const leadership: LeadershipMember[] = [
     motto: "Awaken the mind, discover the self, and become who you truly are.",
   },
   {
-    role: "Director of Partnerships",
+    role: "Director of Research and Education",
     name: "Doreen Chikonde Mwelwa (Akula TaMa BaNiNi)",
     title: "Author | Researcher | Advocate for Inner Healing & Conscious Living",
     image: "/images/photo_2026-08-31_19-29-50.jpg",
@@ -99,17 +99,6 @@ const leadership: LeadershipMember[] = [
       "Mmaduabuchi Ogu is a technology professional with a background in Science Laboratory Technology (Biochemistry) and a Postgraduate Diploma in Education (PGDE). Driven by a passion for innovation, technology, and problem-solving, he transitioned into the technology industry, where he has developed expertise in Artificial Intelligence and Machine Learning, with a specialization in Natural Language Processing (NLP).",
       "He is also a Full-Stack Web Developer with experience in designing and developing modern, responsive web applications. In addition, Mmaduabuchi is a professional Solar Installation Engineer with expertise in solar power system design, installation, and maintenance.",
       "Passionate about leveraging technology to create impactful solutions, he is committed to facilitating meaningful discussions, solving real-world problems, and contributing to projects that drive positive change in society.",
-    ],
-  },
-  {
-    role: "Director of Digital Communications and Social Media",
-    name: "Brian Waters",
-    title:
-      "Global Sports Professional | Social Media & E-Commerce Educator | Entrepreneur",
-    image: "/images/photo_2026-08-31_20-09-21.jpg",
-    bio: [
-      "Brian Waters is a Chapel Hill, North Carolina native and Elon University Sports Management graduate who transitioned a 2009 professional basketball career into a global mission spanning 30 countries. After playing and coaching across China, Hong Kong, Australia, Saudi Arabia, Thailand, Taiwan, Canada, and Uganda, he ultimately settled in East Africa. Across eight years living in Kenya, Tanzania, Rwanda, and Uganda, he has dedicated himself to empowering African youth and students through social media and e-commerce education, using the real-world insights from his travels to bridge the gaps left by traditional curriculums.",
-      "His hands-on impact spans multiple impactful ventures, including StockWave, an e-commerce platform that teaches local students how to sell globally via WeChat and Instagram, and Open House Africa, which showcases universities to the diaspora. He also founded Myaah.com—dubbed 'the Zillow of Africa'—to cover real estate across all 54 countries, alongside Agriscell, a media platform tackling food security and commodities trading. From fashion to farming, Waters' work centers on giving back, educating communities on overlooked issues, and creating opportunity where it is needed most.",
     ],
   },
 ];

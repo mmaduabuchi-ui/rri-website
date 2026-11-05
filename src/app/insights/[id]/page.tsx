@@ -50,6 +50,7 @@ function ArticleMedia({
       <img
         src={url}
         alt={caption ?? "Article media"}
+        loading="eager"
         className="w-full rounded-2xl object-cover"
       />
     );
@@ -165,6 +166,25 @@ export default async function InsightPage({ params }: PageProps) {
           Back to Insights
         </Link>
 
+        {/* Cover image — TOP */}
+        {article.cover_url && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={article.cover_url}
+            alt={`Cover image for ${article.title}`}
+            loading="eager"
+            className="mt-8 max-h-128 w-full rounded-2xl object-cover"
+          />
+        )}
+
+        {/* Attached media (image / video / audio / link) — also at TOP, right after cover */}
+        <ArticleMedia
+          type={article.media_type ?? "none"}
+          url={article.media_url ?? null}
+          caption={article.media_caption ?? null}
+        />
+
+        {/* Header now comes after the images/media */}
         <header className="mt-8">
           <span
             className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${badgeStyle}`}
@@ -190,24 +210,9 @@ export default async function InsightPage({ params }: PageProps) {
           )}
         </header>
 
-        {article.cover_url && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={article.cover_url}
-            alt={`Cover image for ${article.title}`}
-            className="mt-8 max-h-128 w-full rounded-2xl object-cover"
-          />
-        )}
-
         <div className="mt-8 whitespace-pre-wrap text-base leading-8 text-slate-700">
           {article.body}
         </div>
-
-        <ArticleMedia
-          type={article.media_type ?? "none"}
-          url={article.media_url ?? null}
-          caption={article.media_caption ?? null}
-        />
       </article>
     </main>
   );
